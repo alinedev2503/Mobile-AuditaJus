@@ -1,0 +1,6 @@
+{
+  "name": "Contador Jurídico Pro",
+  "description": "Democratize o acesso ao Juizado Especial Cível (JEC). Analise evidências com Gemini, calcule danos e juros, e gere petições em PDF.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
