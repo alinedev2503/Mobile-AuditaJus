@@ -5,6 +5,8 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.db.AppDatabase
+import com.example.util.CloudSyncManager
+import kotlinx.coroutines.launch
 import com.example.data.db.CaseEntity
 import com.example.data.db.EvidencePhotoEntity
 import com.example.data.db.HearingDeadlineEntity
@@ -21,6 +23,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val db = AppDatabase.getInstance(application)
     private val repository = LegalAuditRepository(db)
     private val userPreferences = UserPreferencesRepository(application)
+    private val cloudSyncManager = CloudSyncManager(application, db)
 
     val userSettings: StateFlow<UserSettings> = userPreferences.userSettingsFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), UserSettings())
@@ -66,6 +69,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun updateCase(caseEntity: CaseEntity) {
+        viewModelScope.launch {
+            repository.updateCase(caseEntity)
+            cloudSyncManager.syncCaseToCloud(caseEntity)
+        }
+    }
+
     fun selectCase(caseId: Long) {
         _selectedCaseId.value = caseId
     }
@@ -100,21 +110,25 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 defendantName = defendantName
             )
             val newId = repository.insertCase(newCase)
+            cloudSyncManager.syncCaseToCloud(newCase)
             _selectedCaseId.value = newId
         }
     }
 
-    fun addEvidencePhoto(caseId: Long, label: String, photoUri: String = "") {
+            fun addEvidencePhoto(caseId: Long, label: String, photoUri: String = "") {
         viewModelScope.launch {
-            repository.addEvidencePhoto(
-                EvidencePhotoEntity(
-                    caseId = caseId,
-                    photoUri = photoUri,
-                    label = label,
-                    extractedText = "Documento anexado para auditoria"
-                )
+            val ev = EvidencePhotoEntity(
+                caseId = caseId,
+                photoUri = photoUri,
+                label = label,
+                extractedText = "Documento anexado para auditoria"
             )
+            val newId = repository.addEvidencePhoto(ev)
+            cloudSyncManager.syncEvidenceToCloud(ev.copy(id = newId))
         }
+    }
+
+
     }
 
     fun triggerGeminiAnalysis(caseId: Long, userNotes: String = "") {
@@ -186,6 +200,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun setLoggedIn(isLoggedIn: Boolean, name: String? = null, email: String? = null) {
         viewModelScope.launch {
             userPreferences.setLoggedIn(isLoggedIn, name, email)
+            if (isLoggedIn) {
+                cloudSyncManager.restoreCasesFromCloud()
+            }
         }
     }
 

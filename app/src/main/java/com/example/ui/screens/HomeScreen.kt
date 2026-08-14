@@ -1,5 +1,7 @@
 package com.example.ui.screens
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,6 +19,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,10 +30,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
 import com.example.data.db.CaseEntity
 import com.example.data.db.EvidencePhotoEntity
 import com.example.ui.MainViewModel
+import com.example.ui.components.CameraCaptureView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,6 +45,7 @@ fun HomeScreen(
     onNavigateToPetition: (Long) -> Unit,
     onNavigateToGuides: () -> Unit,
     onOpenAiAssistant: () -> Unit,
+    onNavigateToAllCases: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val cases by viewModel.cases.collectAsState()
@@ -48,6 +54,20 @@ fun HomeScreen(
     val isAnalyzing by viewModel.isAnalyzing.collectAsState()
     val userSettings by viewModel.userSettings.collectAsState()
     val context = LocalContext.current
+
+    var showTutorial by remember { mutableStateOf(false) }
+    if (showTutorial) {
+        DocumentPhotoTutorialDialog(onDismiss = { showTutorial = false })
+    }
+
+    var showCamera by remember { mutableStateOf(false) }
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            showCamera = true
+        }
+    }
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -59,7 +79,8 @@ fun HomeScreen(
         }
     }
 
-    Scaffold(
+    Box(modifier = modifier.fillMaxSize()) {
+        Scaffold(
         topBar = {
             TopAppBar(
                 title = {
@@ -198,6 +219,14 @@ fun HomeScreen(
                     onAttachWhatsapp = {
                         activeCase?.let { viewModel.addEvidencePhoto(it.id, "Anexar Conversa de WhatsApp") }
                     },
+                    onShowTutorial = { showTutorial = true },
+                    onOpenCamera = {
+                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                            showCamera = true
+                        } else {
+                            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                        }
+                    },
                     onCustomPick = {
                         photoPickerLauncher.launch("image/*")
                     }
@@ -218,7 +247,7 @@ fun HomeScreen(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                     )
-                    TextButton(onClick = { /* Navigates or filters */ }) {
+                    TextButton(onClick = onNavigateToAllCases, modifier = Modifier.testTag("view_all_cases_button")) {
                         Text("Ver Todos", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                     }
                 }
@@ -240,9 +269,21 @@ fun HomeScreen(
                 HelpBannerBentoCard(onGuideClick = onNavigateToGuides)
             }
         }
+        }
+    }
+
+    if (showCamera) {
+        CameraCaptureView(
+            onImageCaptured = { uri ->
+                showCamera = false
+                activeCase?.let { caseItem ->
+                    viewModel.addEvidencePhoto(caseItem.id, "Foto da Câmera", uri.toString())
+                }
+            },
+            onCancel = { showCamera = false }
+        )
     }
 }
-
 @Composable
 fun BentoHeroScannerCard(
     isAnalyzing: Boolean,
@@ -572,9 +613,10 @@ fun BentoStepDot(step: Int, label: String, currentStep: Int) {
             text = label,
             style = MaterialTheme.typography.labelSmall.copy(
                 fontSize = 10.sp,
-                fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface
+            ),
+            maxLines = 1
         )
     }
 }
@@ -585,7 +627,9 @@ fun AnexarProvasBentoSection(
     onAttachContract: () -> Unit,
     onAttachBill: () -> Unit,
     onAttachWhatsapp: () -> Unit,
-    onCustomPick: () -> Unit
+    onCustomPick: () -> Unit,
+    onOpenCamera: () -> Unit,
+    onShowTutorial: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -624,8 +668,16 @@ fun AnexarProvasBentoSection(
                     )
                 }
 
-                IconButton(onClick = onCustomPick) {
-                    Icon(imageVector = Icons.Default.AddAPhoto, contentDescription = "Adicionar Foto")
+                Row {
+                    IconButton(onClick = onShowTutorial, modifier = Modifier.testTag("show_photo_tutorial_button")) {
+                        Icon(imageVector = Icons.Outlined.HelpOutline, contentDescription = "Tutorial de Fotos", tint = MaterialTheme.colorScheme.primary)
+                    }
+                    IconButton(onClick = onOpenCamera) {
+                        Icon(imageVector = Icons.Default.CameraAlt, contentDescription = "Tirar Foto")
+                    }
+                    IconButton(onClick = onCustomPick) {
+                        Icon(imageVector = Icons.Default.AddAPhoto, contentDescription = "Adicionar Foto")
+                    }
                 }
             }
 
@@ -847,3 +899,84 @@ fun HelpBannerBentoCard(onGuideClick: () -> Unit) {
     }
 }
 
+
+@Composable
+fun DocumentPhotoTutorialDialog(onDismiss: () -> Unit) {
+    var currentPage by remember { mutableIntStateOf(0) }
+    
+    val pages = listOf(
+        Pair("1. Iluminação e Reflexos", "Posicione o documento em local bem iluminado, de preferência luz natural. Evite reflexos de flash que escondam números ou textos importantes."),
+        Pair("2. Enquadramento Completo", "Tire a foto de cima para baixo. Certifique-se de que todas as bordas do documento (fatura, contrato) apareçam na imagem sem cortes."),
+        Pair("3. Foco e Nitidez", "Toque na tela do celular para focar antes de capturar. O texto deve estar nítido e fácil de ler. Se estiver embaçado, a IA não conseguirá ler os valores."),
+        Pair("4. Prints de Conversas", "Ao enviar prints do WhatsApp, mostre claramente as datas, o nome ou número do contato e o contexto da promessa ou cobrança abusiva.")
+    )
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text("Dicas para fotos de documentos", fontWeight = FontWeight.Bold)
+        },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth().animateContentSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Card(
+                    modifier = Modifier.fillMaxWidth().height(180.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp).fillMaxSize(),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = pages[currentPage].first,
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSecondaryContainer)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = pages[currentPage].second,
+                            style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSecondaryContainer)
+                        )
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    pages.forEachIndexed { index, _ ->
+                        Box(
+                            modifier = Modifier
+                                .size(if (currentPage == index) 10.dp else 8.dp)
+                                .background(
+                                    if (currentPage == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
+                                    shape = CircleShape
+                                )
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    if (currentPage < pages.size - 1) {
+                        currentPage++
+                    } else {
+                        onDismiss()
+                    }
+                },
+                modifier = Modifier.testTag("tutorial_next_button")
+            ) {
+                Text(if (currentPage < pages.size - 1) "Próximo" else "Entendi")
+            }
+        },
+        dismissButton = {
+            if (currentPage > 0) {
+                TextButton(onClick = { currentPage-- }, modifier = Modifier.testTag("tutorial_prev_button")) {
+                    Text("Voltar")
+                }
+            }
+        }
+    )
+}

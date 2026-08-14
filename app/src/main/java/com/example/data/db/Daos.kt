@@ -29,6 +29,9 @@ interface EvidencePhotoDao {
     @Query("SELECT * FROM evidence_photos WHERE caseId = :caseId ORDER BY timestamp ASC")
     fun getPhotosForCase(caseId: Long): Flow<List<EvidencePhotoEntity>>
 
+    @Query("SELECT * FROM evidence_photos WHERE caseId = :caseId ORDER BY timestamp ASC")
+    suspend fun getPhotosForCaseDirect(caseId: Long): List<EvidencePhotoEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPhoto(photo: EvidencePhotoEntity): Long
 

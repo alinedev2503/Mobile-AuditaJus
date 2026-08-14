@@ -137,33 +137,81 @@ fun StructuredPetitionScreen(
                                 )
                             )
 
-                            Text(
-                                text = "1. DOS FATOS:\n" + current.fatosText,
-                                style = MaterialTheme.typography.bodySmall.copy(
-                                    fontFamily = FontFamily.Serif,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                ),
-                                maxLines = 4
-                            )
+                            var isEditing by remember { mutableStateOf(false) }
+                            var fatos by remember(current.fatosText) { mutableStateOf(current.fatosText) }
+                            var fundamentos by remember(current.fundamentosText) { mutableStateOf(current.fundamentosText) }
+                            var pedidos by remember(current.pedidosText) { mutableStateOf(current.pedidosText) }
 
-                            Text(
-                                text = "2. DOS FUNDAMENTOS JURÍDICOS:\n" + current.fundamentosText,
-                                style = MaterialTheme.typography.bodySmall.copy(
-                                    fontFamily = FontFamily.Serif,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                ),
-                                maxLines = 3
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "PRÉVIA DO DOCUMENTO",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                )
+                                TextButton(onClick = { 
+                                    if (isEditing) {
+                                        viewModel.updateCase(current.copy(
+                                            fatosText = fatos,
+                                            fundamentosText = fundamentos,
+                                            pedidosText = pedidos
+                                        ))
+                                    }
+                                    isEditing = !isEditing 
+                                }) {
+                                    Text(if (isEditing) "Salvar" else "Editar")
+                                }
+                            }
 
-                            Text(
-                                text = "3. DOS PEDIDOS:\n" + current.pedidosText,
-                                style = MaterialTheme.typography.bodySmall.copy(
-                                    fontFamily = FontFamily.Serif,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                ),
-                                maxLines = 3
-                            )
+                            if (isEditing) {
+                                OutlinedTextField(
+                                    value = fatos,
+                                    onValueChange = { fatos = it },
+                                    label = { Text("1. DOS FATOS") },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                OutlinedTextField(
+                                    value = fundamentos,
+                                    onValueChange = { fundamentos = it },
+                                    label = { Text("2. DOS FUNDAMENTOS JURÍDICOS") },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                OutlinedTextField(
+                                    value = pedidos,
+                                    onValueChange = { pedidos = it },
+                                    label = { Text("3. DOS PEDIDOS") },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            } else {
+                                Text(
+                                    text = "1. DOS FATOS:\n" + current.fatosText,
+                                    style = MaterialTheme.typography.bodySmall.copy(
+                                        fontFamily = FontFamily.Serif,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                )
 
+                                Text(
+                                    text = "2. DOS FUNDAMENTOS JURÍDICOS:\n" + current.fundamentosText,
+                                    style = MaterialTheme.typography.bodySmall.copy(
+                                        fontFamily = FontFamily.Serif,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                )
+
+                                Text(
+                                    text = "3. DOS PEDIDOS:\n" + current.pedidosText,
+                                    style = MaterialTheme.typography.bodySmall.copy(
+                                        fontFamily = FontFamily.Serif,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                )
+                            }
                             Spacer(modifier = Modifier.height(10.dp))
 
                             Row(

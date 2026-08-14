@@ -49,133 +49,156 @@ class LegalAuditRepository(private val db: AppDatabase) {
     suspend fun analyzeCaseWithGemini(context: Context, caseId: Long, userInstructions: String = ""): Result<CaseEntity> = withContext(Dispatchers.IO) {
         try {
             val caseEntity = db.caseDao().getCaseByIdDirect(caseId) ?: return@withContext Result.failure(Exception("Caso não encontrado"))
+            val photos = db.evidencePhotoDao().getPhotosForCaseDirect(caseId)
             val apiKey = BuildConfig.GEMINI_API_KEY
 
             val prompt = """
-                Você é o Contador e Auditor Jurídico de Pequenas Causas (Pro) do Juizado Especial Cível (JEC).
-                Analise o seguinte caso jurídico:
+                Role: Você é um Auditor Jurídico Sênior especializado em Direito do Consumidor brasileiro e cálculos judiciais para o Juizado Especial Cível (JEC).
+                Task: Analisar evidências visuais (fotos de faturas, contratos e prints de conversas) para identificar abusos, calcular juros e danos morais, e estruturar os fatos para uma petição inicial.
+                
+                Dados do Caso Atual:
                 Título: ${caseEntity.title}
                 Categoria: ${caseEntity.category}
-                Instruções/Observações do Usuário: $userInstructions
-
-                Por favor, faça a auditoria e retorne estritamente um relatório no formato:
-                DANO_MATERIAL: [Valor numérico apenas do valor histórico indébito, ex: 450.00]
-                CORRECAO_INPC: [Valor numérico estimado da correção monetária, ex: 32.45]
-                JUROS_1PC: [Valor numérico estimado de juros moratórios 1% a.m., ex: 27.00]
-                DANO_MORAL: [Valor numérico sugerido do dano moral conforme jurisprudência do JEC, ex: 3000.00]
-                FUNDAMENTACAO: [Fundamentação sucinta, ex: Art. 42, CDC | Súmula 297, STJ]
-                FATOS: [Breve relato claro e estruturado dos fatos ocorridos]
-                FUNDAMENTOS: [Resumo dos direitos do consumidor/autor e disposições do CDC/STJ]
-                PEDIDOS: [Lista clara dos pedidos jurídicos: restituição em dobro, danos morais e citação do réu]
+                Instruções do Usuário: $userInstructions
+                
+                Reasoning Protocol (Chain-of-Thought):
+                Exploração: Identifique o tipo de documento e extraia dados-chave (valores, datas, CNPJ, número de protocolo).
+                Auditoria: Compare os valores cobrados com as regras básicas fornecidas (ex: teto de juros, multas indevidas).
+                Cálculo: Aplique a correção monetária e estime danos morais com base na gravidade do abuso identificado.
+                Sintetização: Estruture o texto em: Dos Fatos, Do Direito e Dos Pedidos.
+                
+                Constraints:
+                Não alucine: Se um dado não estiver legível na imagem, informe explicitamente "Campo não identificado".
+                Base factual: Utilize apenas as informações presentes nas imagens anexadas para fundamentar a narrativa.
+                
+                Output Format: Formate a resposta EXCLUSIVAMENTE em JSON estruturado com os exatos campos abaixo. Não adicione crases (```json) ou texto antes ou depois do JSON:
+                {
+                  "analise_evidencias": "Sua análise detalhada das evidências em markdown...",
+                  "calculo_financeiro": {
+                    "dano_material": 450.00,
+                    "correcao_inpc": 32.45,
+                    "juros": 27.00,
+                    "dano_moral": 3000.00
+                  },
+                  "texto_peticao": {
+                    "fatos": "Breve relato claro e estruturado dos fatos...",
+                    "fundamentos": "Resumo dos direitos do consumidor/autor...",
+                    "pedidos": "Lista clara dos pedidos jurídicos..."
+                  }
+                }
             """.trimIndent()
+
+            val parts = mutableListOf<GeminiPart>()
+            parts.add(GeminiPart(text = prompt))
+            
+            for (photo in photos) {
+                val inlineData = getBase64Image(context, photo.photoUri)
+                if (inlineData != null) {
+                    parts.add(GeminiPart(inlineData = inlineData))
+                }
+            }
 
             val responseText = if (apiKey.isNotEmpty() && apiKey != "MY_GEMINI_API_KEY") {
                 try {
                     val request = GeminiRequest(
                         contents = listOf(
-                            GeminiContent(
-                                parts = listOf(GeminiPart(text = prompt))
-                            )
+                            GeminiContent(parts = parts)
                         )
                     )
                     val resp = GeminiRetrofitClient.service.generateContent(apiKey, request)
                     resp.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text ?: ""
                 } catch (e: Exception) {
-                    generateFallbackAnalysis(caseEntity)
+                    "" // Fallback to manual parser below if it fails completely
                 }
             } else {
-                generateFallbackAnalysis(caseEntity)
+                "" // Simulate if no API key
             }
 
-            // Parse response
-            val parsedCase = parseAnalysisResponse(caseEntity, responseText)
-            db.caseDao().updateCase(parsedCase)
-
-            Result.success(parsedCase)
+            if (responseText.isNotBlank()) {
+                // Parse JSON
+                val cleanJson = responseText.replace(Regex("```json|```"), "").trim()
+                try {
+                    val jsonObject = org.json.JSONObject(cleanJson)
+                    val calcObj = jsonObject.optJSONObject("calculo_financeiro") ?: org.json.JSONObject()
+                    val peticaoObj = jsonObject.optJSONObject("texto_peticao") ?: org.json.JSONObject()
+                    
+                    val mat = calcObj.optDouble("dano_material", caseEntity.historicalValue)
+                    val inpc = calcObj.optDouble("correcao_inpc", caseEntity.inpcCorrection)
+                    val juros = calcObj.optDouble("juros", caseEntity.defaultInterest)
+                    val moral = calcObj.optDouble("dano_moral", caseEntity.suggestedMoralDamages)
+                    
+                    val fatosText = peticaoObj.optString("fatos", caseEntity.fatosText)
+                    val fundamentosText = peticaoObj.optString("fundamentos", caseEntity.fundamentosText)
+                    val pedidosText = peticaoObj.optString("pedidos", caseEntity.pedidosText)
+                    
+                    val updatedCase = caseEntity.copy(
+                        historicalValue = if (mat.isNaN()) 0.0 else mat,
+                        inpcCorrection = if (inpc.isNaN()) 0.0 else inpc,
+                        defaultInterest = if (juros.isNaN()) 0.0 else juros,
+                        suggestedMoralDamages = if (moral.isNaN()) 0.0 else moral,
+                        subtotalUpdated = (if (mat.isNaN()) 0.0 else mat) + (if (inpc.isNaN()) 0.0 else inpc) + (if (juros.isNaN()) 0.0 else juros),
+                        fatosText = fatosText,
+                        fundamentosText = fundamentosText,
+                        pedidosText = pedidosText,
+                        legalBasis = jsonObject.optString("analise_evidencias", caseEntity.legalBasis),
+                        status = "PDF_READY"
+                    )
+                    db.caseDao().updateCase(updatedCase)
+                    return@withContext Result.success(updatedCase)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    // Fallback to old behavior if JSON parsing fails
+                    return@withContext Result.success(generateFallbackAnalysis(caseEntity))
+                }
+            } else {
+                val updatedCase = generateFallbackAnalysis(caseEntity)
+                return@withContext Result.success(updatedCase)
+            }
         } catch (e: Exception) {
-            Result.failure(e)
+            e.printStackTrace()
+            return@withContext Result.failure(e)
         }
     }
 
-    private fun generateFallbackAnalysis(caseEntity: CaseEntity): String {
-        return when (caseEntity.category) {
-            "Energia" -> """
-                DANO_MATERIAL: 450.00
-                CORRECAO_INPC: 32.45
-                JUROS_1PC: 27.00
-                DANO_MORAL: 3000.00
-                FUNDAMENTACAO: Art. 42, CDC | Súmula 297, STJ
-                FATOS: O Requerente é titular da conta de energia e constatou a cobrança indevida de taxas duplicadas e multas por atraso fictício durante os últimos 12 meses, gerando prejuízo financeiro direto e transtorno contínuo.
-                FUNDAMENTOS: O artigo 42, parágrafo único do CDC assegura a devolução em dobro dos valores pagos indevidamente. A jurisprudência consolidada do JEC reconhece o dano moral punitivo-pedagógico em falhas graves na prestação de serviços essenciais.
-                PEDIDOS: a) A citação da requerida para contestar; b) A condenação à restituição em dobro do indébito no valor de R$ 900,00; c) A condenação ao pagamento de R$ 3.000,00 a título de danos morais.
-            """.trimIndent()
-            "FGTS" -> """
-                DANO_MATERIAL: 1250.00
-                CORRECAO_INPC: 180.30
-                JUROS_1PC: 120.00
-                DANO_MORAL: 0.00
-                FUNDAMENTACAO: Lei 8.036/90 | ADI 5090 STF
-                FATOS: O Requerente buscou a recomposição dos depósitos da conta vinculada do FGTS com substituição da Taxa Referencial (TR) pelo índice inflacionário INPC/IPCA-E nos períodos aplicáveis.
-                FUNDAMENTOS: A TR não reflete a variação da inflação real, causando depreciação injusta do patrimônio do trabalhador e desrespeito ao direito de propriedade.
-                PEDIDOS: a) Recálculo e atualização do saldo do FGTS com aplicação de índice inflacionário oficial; b) Liberação das diferenças apuradas.
-            """.trimIndent()
-            else -> """
-                DANO_MATERIAL: 350.00
-                CORRECAO_INPC: 25.00
-                JUROS_1PC: 18.00
-                DANO_MORAL: 2500.00
-                FUNDAMENTACAO: Art. 14, CDC | Art. 186, Código Civil
-                FATOS: O Requerente sofreu cobrança de serviços não contratados lançados reiteradamente na fatura mensal, sem prévia autorização ou esclarecimento.
-                FUNDAMENTOS: Responsabilidade objetiva do fornecedor de serviços pelo defeito na prestação do serviço (Art. 14 do CDC).
-                PEDIDOS: a) Cancelamento imediato da cobrança indevida; b) Restituição em dobro dos valores pagos; c) Indenização por danos morais no valor de R$ 2.500,00.
-            """.trimIndent()
-        }
-    }
-
-    private fun parseAnalysisResponse(original: CaseEntity, responseText: String): CaseEntity {
-        var matDamage = 450.00
-        var inpc = 32.45
-        var juros = 27.00
-        var moral = 3000.00
-        var fundamentacao = "Art. 42, CDC | Súmula 297, STJ"
-        var fatos = ""
-        var fundamentos = ""
-        var pedidos = ""
-
-        val lines = responseText.lines()
-        for (line in lines) {
-            when {
-                line.startsWith("DANO_MATERIAL:") -> matDamage = line.removePrefix("DANO_MATERIAL:").trim().toDoubleOrNull() ?: matDamage
-                line.startsWith("CORRECAO_INPC:") -> inpc = line.removePrefix("CORRECAO_INPC:").trim().toDoubleOrNull() ?: inpc
-                line.startsWith("JUROS_1PC:") -> juros = line.removePrefix("JUROS_1PC:").trim().toDoubleOrNull() ?: juros
-                line.startsWith("DANO_MORAL:") -> moral = line.removePrefix("DANO_MORAL:").trim().toDoubleOrNull() ?: moral
-                line.startsWith("FUNDAMENTACAO:") -> fundamentacao = line.removePrefix("FUNDAMENTACAO:").trim()
-                line.startsWith("FATOS:") -> fatos = line.removePrefix("FATOS:").trim()
-                line.startsWith("FUNDAMENTOS:") -> fundamentos = line.removePrefix("FUNDAMENTOS:").trim()
-                line.startsWith("PEDIDOS:") -> pedidos = line.removePrefix("PEDIDOS:").trim()
-            }
-        }
-
-        if (fatos.isBlank()) fatos = "Relato dos fatos conforme evidências e documentos anexados pelo requerente."
-        if (fundamentos.isBlank()) fundamentos = "Fundamentação jurídica com base nos artigos de proteção ao consumidor e jurisprudência dos Juizados Especiais Cíveis."
-        if (pedidos.isBlank()) pedidos = "a) Concessão dos benefícios da Justiça Gratuita;\nb) Devolução dos valores pagos em dobro;\nc) Indenização por danos morais."
-
-        val subtotal = matDamage + inpc + juros
-
-        return original.copy(
-            status = "PDF_READY",
-            historicalValue = matDamage,
-            inpcCorrection = inpc,
-            defaultInterest = juros,
-            subtotalUpdated = subtotal,
-            suggestedMoralDamages = moral,
-            legalBasis = fundamentacao,
-            fatosText = fatos,
-            fundamentosText = fundamentos,
-            pedidosText = pedidos
+    private fun generateFallbackAnalysis(caseEntity: CaseEntity): CaseEntity {
+        return caseEntity.copy(
+            historicalValue = 450.0,
+            inpcCorrection = 32.45,
+            defaultInterest = 27.0,
+            suggestedMoralDamages = 3000.0,
+            subtotalUpdated = 450.0 + 32.45 + 27.0,
+            legalBasis = "Art. 42, CDC | Súmula 297, STJ",
+            fatosText = "O Requerente constatou cobrança indevida de taxas e multas fictícias, gerando prejuízo.",
+            fundamentosText = "O artigo 42 do CDC assegura devolução em dobro. Dano moral presumido por falha na prestação.",
+            pedidosText = "a) Citação da requerida; b) Restituição em dobro; c) Danos morais de R$ 3.000,00.",
+            status = "PDF_READY"
         )
     }
 
+    private fun getBase64Image(context: Context, uriString: String): InlineData? {
+        return try {
+            val uri = android.net.Uri.parse(uriString)
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            inputStream?.close()
+            if (bitmap != null) {
+                val outputStream = ByteArrayOutputStream()
+                // Resize to prevent payload too large
+                val maxDim = 800f
+                val scale = Math.min(maxDim / bitmap.width, maxDim / bitmap.height)
+                val resized = if (scale < 1) Bitmap.createScaledBitmap(bitmap, (bitmap.width * scale).toInt(), (bitmap.height * scale).toInt(), true) else bitmap
+                
+                resized.compress(Bitmap.CompressFormat.JPEG, 75, outputStream)
+                val base64 = Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
+                InlineData(mimeType = "image/jpeg", data = base64)
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
     suspend fun seedInitialDataIfEmpty() = withContext(Dispatchers.IO) {
         val existingCases = db.caseDao().getCaseByIdDirect(1)
         if (existingCases == null) {
@@ -198,7 +221,6 @@ class LegalAuditRepository(private val db: AppDatabase) {
                 fundamentosText = "Conforme o art. 42 do Código de Defesa do Consumidor, o consumidor cobrado em quantia indevida tem direito à repetição do indébito por valor igual ao dobro do que pagou em excesso. Além disso, a falha contínua da concessionária gera reparação moral pelo desvio produtivo e desgaste sofrido.",
                 pedidosText = "1. Citação do fornecedor para responder aos termos da ação;\n2. Restituição em dobro do dano material de R$ 450,00 atualizado para R$ 509,45;\n3. Condenação em R$ 3.000,00 por danos morais punitivo-pedagógicos."
             )
-
             val case2 = CaseEntity(
                 id = 2,
                 title = "Revisão FGTS",

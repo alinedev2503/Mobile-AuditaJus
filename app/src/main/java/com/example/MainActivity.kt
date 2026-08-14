@@ -133,7 +133,10 @@ fun ContadorJuridicoProApp() {
                     onNavigateToGuides = {
                         navController.navigate(AppNavDestination.GUIDES.name)
                     },
-                    onOpenAiAssistant = { showAiAssistantDialog = true }
+                    onOpenAiAssistant = { showAiAssistantDialog = true },
+                    onNavigateToAllCases = {
+                        navController.navigate(AppNavDestination.CASES.name)
+                    }
                 )
             }
 
