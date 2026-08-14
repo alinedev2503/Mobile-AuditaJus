@@ -74,7 +74,7 @@ fun MyCasesScreen(
                         .testTag("search_cases_input"),
                     placeholder = { Text("Buscar processos, faturas ou causas...") },
                     leadingIcon = {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = "Buscar")
+                        Icon(imageVector = Icons.Default.Search, contentDescription = "Buscar", tint = MaterialTheme.colorScheme.primary)
                     },
                     trailingIcon = {
                         if (searchQuery.isNotEmpty()) {
@@ -83,7 +83,13 @@ fun MyCasesScreen(
                             }
                         }
                     },
-                    shape = RoundedCornerShape(24.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
+                    ),
                     singleLine = true
                 )
 
@@ -103,11 +109,18 @@ fun MyCasesScreen(
                         FilterChip(
                             selected = isSelected,
                             onClick = { viewModel.setCaseFilter(if (label == "Todos") "All" else label) },
-                            label = { Text("$label ($count)") },
+                            label = { Text("$label ($count)", fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium) },
                             modifier = Modifier.testTag("filter_chip_$label"),
+                            shape = RoundedCornerShape(16.dp),
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                            ),
+                            border = FilterChipDefaults.filterChipBorder(
+                                enabled = true,
+                                selected = isSelected,
+                                borderColor = MaterialTheme.colorScheme.outlineVariant
                             )
                         )
                     }
@@ -118,9 +131,10 @@ fun MyCasesScreen(
             ExtendedFloatingActionButton(
                 onClick = { showNewCaseDialog = true },
                 icon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
-                text = { Text("Novo Caso") },
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                text = { Text("Novo Caso", fontWeight = FontWeight.Bold) },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = Color.White,
+                shape = RoundedCornerShape(20.dp),
                 modifier = Modifier.testTag("new_case_fab")
             )
         },
@@ -194,12 +208,13 @@ fun MyCaseCardItem(
             .fillMaxWidth()
             .clickable { onClick() }
             .testTag("my_case_card_${caseEntity.id}"),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(18.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Row(
@@ -207,13 +222,19 @@ fun MyCaseCardItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = caseEntity.category,
-                    style = MaterialTheme.typography.labelMedium.copy(
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold
+                Surface(
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        text = caseEntity.category,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            fontWeight = FontWeight.Bold
+                        )
                     )
-                )
+                }
                 StatusBadge(status = caseEntity.status)
             }
 
@@ -233,7 +254,7 @@ fun MyCaseCardItem(
                 maxLines = 2
             )
 
-            Divider(color = MaterialTheme.colorScheme.outlineVariant)
+            Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -247,9 +268,9 @@ fun MyCaseCardItem(
 
                 Text(
                     text = "Dano Est.: R$ %.2f".format(caseEntity.subtotalUpdated + caseEntity.suggestedMoralDamages),
-                    style = MaterialTheme.typography.labelMedium.copy(
+                    style = MaterialTheme.typography.labelLarge.copy(
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primaryContainer
+                        color = MaterialTheme.colorScheme.primary
                     )
                 )
             }

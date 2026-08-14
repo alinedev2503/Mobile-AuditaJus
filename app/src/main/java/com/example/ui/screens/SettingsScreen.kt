@@ -61,8 +61,9 @@ fun SettingsScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("user_profile_card"),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(24.dp),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
                     Row(
@@ -123,8 +124,9 @@ fun SettingsScreen(
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest)
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Column {
                         ListItem(
@@ -133,7 +135,7 @@ fun SettingsScreen(
                             trailingContent = { Icon(Icons.Default.ChevronRight, contentDescription = null) },
                             modifier = Modifier.testTag("change_password_item")
                         )
-                        Divider(color = MaterialTheme.colorScheme.outlineVariant)
+                        Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                         ListItem(
                             headlineContent = { Text("Dados Pessoais & Documentos") },
                             leadingContent = { Icon(Icons.Outlined.Badge, contentDescription = null) },
@@ -157,8 +159,9 @@ fun SettingsScreen(
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest)
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Column {
                         ListItem(
@@ -173,7 +176,7 @@ fun SettingsScreen(
                                 )
                             }
                         )
-                        Divider(color = MaterialTheme.colorScheme.outlineVariant)
+                        Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                         ListItem(
                             headlineContent = { Text("Login Biométrico / Fingerprint") },
                             supportingContent = { Text("Desbloquear app com Digital ou FaceID") },
@@ -204,8 +207,9 @@ fun SettingsScreen(
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest)
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Column {
                         ListItem(
@@ -214,16 +218,16 @@ fun SettingsScreen(
                             trailingContent = { Icon(Icons.Default.ChevronRight, contentDescription = null) },
                             modifier = Modifier.testTag("terms_item").clickable { onNavigateToTerms() }
                         )
-                        Divider(color = MaterialTheme.colorScheme.outlineVariant)
+                        Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                         ListItem(
                             headlineContent = { Text("Suporte Jurídico e Dúvidas") },
                             leadingContent = { Icon(Icons.Outlined.HelpOutline, contentDescription = null) },
                             trailingContent = { Icon(Icons.Default.ChevronRight, contentDescription = null) }
                         )
-                        Divider(color = MaterialTheme.colorScheme.outlineVariant)
+                        Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                         ListItem(
                             headlineContent = { Text("Versão do Aplicativo") },
-                            supportingContent = { Text("Contador Jurídico Pro v1.0.0") },
+                            supportingContent = { Text("AuditaJus v1.0.0") },
                             leadingContent = { Icon(Icons.Outlined.Info, contentDescription = null) }
                         )
                     }
@@ -236,9 +240,10 @@ fun SettingsScreen(
                     onClick = onLogout,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp)
+                        .height(52.dp)
                         .testTag("logout_button"),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.errorContainer),
+                    shape = RoundedCornerShape(16.dp)
                 ) {
                     Icon(imageVector = Icons.Default.Logout, contentDescription = null, tint = MaterialTheme.colorScheme.onErrorContainer)
                     Spacer(modifier = Modifier.width(8.dp))

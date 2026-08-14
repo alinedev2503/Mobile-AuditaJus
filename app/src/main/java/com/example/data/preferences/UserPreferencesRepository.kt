@@ -18,7 +18,8 @@ data class UserSettings(
     val isPushEnabled: Boolean = true,
     val isEmailEnabled: Boolean = false,
     val hasAcceptedTerms: Boolean = true,
-    val hasCompletedOnboarding: Boolean = true
+    val hasCompletedOnboarding: Boolean = true,
+    val isDarkMode: Boolean? = null
 )
 
 class UserPreferencesRepository(private val context: Context) {
@@ -33,6 +34,7 @@ class UserPreferencesRepository(private val context: Context) {
         val EMAIL_ENABLED = booleanPreferencesKey("email_enabled")
         val ACCEPTED_TERMS = booleanPreferencesKey("accepted_terms")
         val COMPLETED_ONBOARDING = booleanPreferencesKey("completed_onboarding")
+        val DARK_MODE = booleanPreferencesKey("dark_mode")
     }
 
     val userSettingsFlow: Flow<UserSettings> = context.dataStore.data.map { prefs ->
@@ -45,8 +47,19 @@ class UserPreferencesRepository(private val context: Context) {
             isPushEnabled = prefs[Keys.PUSH_ENABLED] ?: true,
             isEmailEnabled = prefs[Keys.EMAIL_ENABLED] ?: false,
             hasAcceptedTerms = prefs[Keys.ACCEPTED_TERMS] ?: true,
-            hasCompletedOnboarding = prefs[Keys.COMPLETED_ONBOARDING] ?: true
+            hasCompletedOnboarding = prefs[Keys.COMPLETED_ONBOARDING] ?: true,
+            isDarkMode = prefs[Keys.DARK_MODE]
         )
+    }
+
+    suspend fun setDarkMode(isDark: Boolean?) {
+        context.dataStore.edit { prefs ->
+            if (isDark == null) {
+                prefs.remove(Keys.DARK_MODE)
+            } else {
+                prefs[Keys.DARK_MODE] = isDark
+            }
+        }
     }
 
     suspend fun setLoggedIn(isLoggedIn: Boolean, name: String? = null, email: String? = null) {

@@ -28,9 +28,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MyApplicationTheme {
-                ContadorJuridicoProApp()
-            }
+            ContadorJuridicoProApp()
         }
     }
 }
@@ -41,8 +39,12 @@ fun ContadorJuridicoProApp() {
     val viewModel: MainViewModel = viewModel()
 
     val userSettings by viewModel.userSettings.collectAsState()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
+    val isSystemDark = androidx.compose.foundation.isSystemInDarkTheme()
+    val darkTheme = userSettings.isDarkMode ?: isSystemDark
+
+    MyApplicationTheme(darkTheme = darkTheme) {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
 
     var showAiAssistantDialog by remember { mutableStateOf(false) }
 
@@ -218,4 +220,5 @@ fun ContadorJuridicoProApp() {
             )
         }
     }
+}
 }

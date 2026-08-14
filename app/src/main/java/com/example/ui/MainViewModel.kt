@@ -213,6 +213,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun setDarkMode(isDark: Boolean?) {
+        viewModelScope.launch {
+            userPreferences.setDarkMode(isDark)
+        }
+    }
+
     fun setCompletedOnboarding(completed: Boolean) {
         viewModelScope.launch {
             userPreferences.setCompletedOnboarding(completed)

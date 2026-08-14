@@ -73,7 +73,7 @@ fun HomeScreen(
                             )
                         )
                         Text(
-                            text = "JEC Pro",
+                            text = "AuditaJus",
                             style = MaterialTheme.typography.headlineSmall.copy(
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface

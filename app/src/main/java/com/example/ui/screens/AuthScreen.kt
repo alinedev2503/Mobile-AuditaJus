@@ -63,7 +63,7 @@ fun AuthScreen(
             }
 
             Text(
-                text = "Contador Jurídico Pro",
+                text = "AuditaJus",
                 style = MaterialTheme.typography.headlineSmall.copy(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -77,21 +77,23 @@ fun AuthScreen(
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    modifier = Modifier.padding(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     if (isSignUp) {
                         OutlinedTextField(
                             value = name,
                             onValueChange = { name = it },
                             label = { Text("Nome Completo / OAB") },
-                            leadingIcon = { Icon(Icons.Outlined.Person, contentDescription = null) },
+                            leadingIcon = { Icon(Icons.Outlined.Person, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                             singleLine = true,
+                            shape = RoundedCornerShape(16.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .testTag("auth_name_input")
@@ -102,8 +104,9 @@ fun AuthScreen(
                         value = email,
                         onValueChange = { email = it },
                         label = { Text("E-mail Profissional") },
-                        leadingIcon = { Icon(Icons.Outlined.Email, contentDescription = null) },
+                        leadingIcon = { Icon(Icons.Outlined.Email, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                         singleLine = true,
+                        shape = RoundedCornerShape(16.dp),
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("auth_email_input")
@@ -113,7 +116,7 @@ fun AuthScreen(
                         value = password,
                         onValueChange = { password = it },
                         label = { Text("Senha") },
-                        leadingIcon = { Icon(Icons.Outlined.Lock, contentDescription = null) },
+                        leadingIcon = { Icon(Icons.Outlined.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                         trailingIcon = {
                             IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                                 Icon(
@@ -124,6 +127,7 @@ fun AuthScreen(
                         },
                         visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         singleLine = true,
+                        shape = RoundedCornerShape(16.dp),
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("auth_password_input")
@@ -136,9 +140,13 @@ fun AuthScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp)
+                            .height(52.dp)
                             .testTag("auth_submit_button"),
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(16.dp)
                     ) {
                         Text(
                             text = if (isSignUp) "Criar Conta" else "Entrar no Sistema",
@@ -151,12 +159,12 @@ fun AuthScreen(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Divider(modifier = Modifier.weight(1f))
+                        Divider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                         Text(
-                            text = " ou acesse via redes sociais ",
+                            text = " ou acesse via ",
                             style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray)
                         )
-                        Divider(modifier = Modifier.weight(1f))
+                        Divider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     }
 
                     // Social Auth Buttons
@@ -167,8 +175,9 @@ fun AuthScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
+                            .height(48.dp)
                             .testTag("google_login_button"),
-                        shape = RoundedCornerShape(24.dp)
+                        shape = RoundedCornerShape(16.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.AccountCircle,
@@ -176,7 +185,7 @@ fun AuthScreen(
                             tint = Color(0xFF4285F4)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Continuar com Google")
+                        Text("Continuar com Google", fontWeight = FontWeight.Bold)
                     }
 
                     OutlinedButton(
@@ -186,16 +195,17 @@ fun AuthScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
+                            .height(48.dp)
                             .testTag("apple_login_button"),
-                        shape = RoundedCornerShape(24.dp)
+                        shape = RoundedCornerShape(16.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.PhoneIphone,
                             contentDescription = null,
-                            tint = Color.Black
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Continuar com Apple")
+                        Text("Continuar com Apple", fontWeight = FontWeight.Bold)
                     }
                 }
             }

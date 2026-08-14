@@ -135,10 +135,10 @@ fun OnboardingScreen(
                     pages.indices.forEach { index ->
                         Box(
                             modifier = Modifier
-                                .size(if (index == currentPageIndex) 24.dp else 8.dp, 8.dp)
+                                .size(if (index == currentPageIndex) 28.dp else 10.dp, 10.dp)
                                 .background(
-                                    color = if (index == currentPageIndex) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.outlineVariant,
-                                    shape = RoundedCornerShape(4.dp)
+                                    color = if (index == currentPageIndex) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
+                                    shape = RoundedCornerShape(5.dp)
                                 )
                         )
                     }
@@ -157,7 +157,11 @@ fun OnboardingScreen(
                         .fillMaxWidth()
                         .height(52.dp)
                         .testTag("onboarding_next_button"),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(16.dp)
                 ) {
                     Text(
                         text = if (currentPageIndex == pages.size - 1) "Começar Agora" else "Próximo",

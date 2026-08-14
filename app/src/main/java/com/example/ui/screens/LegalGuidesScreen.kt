@@ -125,20 +125,32 @@ fun LegalGuidesScreen(
                         .testTag("search_guides_input"),
                     placeholder = { Text("Pesquisar direitos, regras ou dúvidas...") },
                     leadingIcon = {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = null)
+                        Icon(imageVector = Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                     },
-                    shape = RoundedCornerShape(24.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
+                    ),
                     singleLine = true
                 )
 
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     val categories = listOf("Todos", "Consumidor", "Trabalhista", "Voos")
                     items(categories) { cat ->
+                        val isSelected = selectedFilter == cat
                         FilterChip(
-                            selected = selectedFilter == cat,
+                            selected = isSelected,
                             onClick = { viewModel.setGuideFilter(cat) },
-                            label = { Text(cat) },
-                            modifier = Modifier.testTag("guide_filter_$cat")
+                            label = { Text(cat, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium) },
+                            modifier = Modifier.testTag("guide_filter_$cat"),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
                         )
                     }
                 }
@@ -161,15 +173,16 @@ fun LegalGuidesScreen(
                         .fillMaxWidth()
                         .clickable { selectedGuideForDetail = allGuides.first() }
                         .testTag("featured_guide_card"),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                    shape = RoundedCornerShape(24.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                 ) {
                     Column(
                         modifier = Modifier.padding(20.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Surface(
-                            color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                            color = Color.White,
                             shape = RoundedCornerShape(12.dp)
                         ) {
                             Text(
@@ -193,14 +206,14 @@ fun LegalGuidesScreen(
                         Text(
                             text = "Saiba o que fazer em caso de cobrança indevida na conta de energia, bandeiras tarifárias irregulares ou queima de aparelhos.",
                             style = MaterialTheme.typography.bodyMedium.copy(
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f)
                             )
                         )
 
                         Button(
                             onClick = { selectedGuideForDetail = allGuides.first() },
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
-                            shape = RoundedCornerShape(20.dp)
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                            shape = RoundedCornerShape(16.dp)
                         ) {
                             Text("Ler Guia Completo", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                         }
@@ -245,12 +258,13 @@ fun GuideCardItem(
             .fillMaxWidth()
             .clickable { onClick() }
             .testTag("guide_item_${guide.id}"),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(18.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Row(
@@ -258,13 +272,19 @@ fun GuideCardItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = guide.category,
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold
+                Surface(
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = guide.category,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            fontWeight = FontWeight.Bold
+                        )
                     )
-                )
+                }
                 Text(
                     text = "${guide.readTimeMinutes} min de leitura",
                     style = MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)

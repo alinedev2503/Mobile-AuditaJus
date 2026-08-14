@@ -16,108 +16,157 @@ object PdfExportManager {
 
     fun generatePetitionPdf(context: Context, caseEntity: CaseEntity): File {
         val document = PdfDocument()
-        val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create() // A4 dimensions in points
-        val page = document.startPage(pageInfo)
-        val canvas: Canvas = page.canvas
+        val pageWidth = 595
+        val pageHeight = 842
+        val marginX = 50f
+        val marginY = 50f
+        val maxTextWidth = pageWidth - (marginX * 2)
+        val bottomMargin = pageHeight - marginY
 
-        val paint = Paint()
-        paint.color = Color.BLACK
-        paint.textSize = 12f
+        var pageNumber = 1
+        var pageInfo = PdfDocument.PageInfo.Builder(pageWidth, pageHeight, pageNumber).create()
+        var page = document.startPage(pageInfo)
+        var canvas = page.canvas
 
-        val titlePaint = Paint()
-        titlePaint.color = Color.parseColor("#004AC6")
-        titlePaint.textSize = 18f
-        titlePaint.typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD)
+        val paint = Paint().apply {
+            color = Color.BLACK
+            textSize = 12f
+        }
+        val boldPaint = Paint(paint).apply {
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+        }
+        val titlePaint = Paint().apply {
+            color = Color.BLACK
+            textSize = 16f
+            typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD)
+            textAlign = Paint.Align.CENTER
+        }
+        val headerPaint = Paint(titlePaint).apply {
+            textSize = 14f
+            textAlign = Paint.Align.LEFT
+        }
 
-        val headerPaint = Paint()
-        headerPaint.color = Color.parseColor("#0F172A")
-        headerPaint.textSize = 13f
-        headerPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+        var y = marginY
 
-        var y = 50f
-        val startX = 50f
-        val maxX = 545f
+        fun startNewPage() {
+            document.finishPage(page)
+            pageNumber++
+            pageInfo = PdfDocument.PageInfo.Builder(pageWidth, pageHeight, pageNumber).create()
+            page = document.startPage(pageInfo)
+            canvas = page.canvas
+            y = marginY
+        }
 
-        // Header
-        canvas.drawText("EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DO", startX, y, headerPaint)
+        fun checkPageBreak(requiredSpace: Float) {
+            if (y + requiredSpace > bottomMargin) {
+                startNewPage()
+            }
+        }
+
+        fun drawWrappedText(text: String, textPaint: Paint, indent: Float = 0f, spacing: Float = 18f) {
+            val lines = wrapText(text, textPaint, maxTextWidth - indent)
+            for (line in lines) {
+                checkPageBreak(spacing)
+                canvas.drawText(line, marginX + indent, y, textPaint)
+                y += spacing
+            }
+        }
+
+        // --- Cabeçalho e Endereçamento ---
+        checkPageBreak(80f)
+        canvas.drawText("EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DO", marginX, y, headerPaint)
         y += 20f
-        canvas.drawText("JUIZADO ESPECIAL CÍVEL DA COMARCA", startX, y, headerPaint)
+        canvas.drawText("JUIZADO ESPECIAL CÍVEL DA COMARCA", marginX, y, headerPaint)
+        y += 60f
+
+        // --- Título ---
+        checkPageBreak(40f)
+        canvas.drawText("PETIÇÃO INICIAL", pageWidth / 2f, y, titlePaint)
         y += 40f
 
-        // Title
-        canvas.drawText("PETIÇÃO INICIAL - JEC", startX, y, titlePaint)
-        y += 18f
-        paint.textSize = 11f
-        paint.color = Color.DKGRAY
-        canvas.drawText("Auditoria Jurídica Eletrônica • Contador Jurídico Pro", startX, y, paint)
+        // --- Qualificação ---
+        val cpf = if (caseEntity.authorCpf.isNotBlank()) caseEntity.authorCpf else "[Inserir CPF]"
+        val defendant = if (caseEntity.defendantName.isNotBlank()) caseEntity.defendantName else "[Nome do Réu]"
+        val authorName = if (caseEntity.authorName.isNotBlank()) caseEntity.authorName else "[Nome do Autor]"
+        
+        val qualificação = "$authorName, inscrito(a) no CPF sob o nº $cpf, residente e domiciliado(a) em [Endereço], por seu próprio direito, vem, respeitosamente, à presença de Vossa Excelência, propor a presente AÇÃO em face de $defendant, pelos fatos e fundamentos a seguir delineados."
+        drawWrappedText(qualificação, paint, indent = 0f)
+        y += 20f
+
+        // --- 1. DOS FATOS ---
+        checkPageBreak(40f)
+        canvas.drawText("1. DOS FATOS", marginX, y, boldPaint)
+        y += 25f
+        val fatos = caseEntity.fatosText.ifBlank { caseEntity.description.ifBlank { "Sem descrição." } }
+        drawWrappedText(fatos, paint, indent = 10f)
+        y += 20f
+
+        // --- 2. DOS FUNDAMENTOS ---
+        checkPageBreak(40f)
+        canvas.drawText("2. DOS FUNDAMENTOS", marginX, y, boldPaint)
+        y += 25f
+        val fundamentos = caseEntity.fundamentosText.ifBlank { caseEntity.legalBasis.ifBlank { "Fundamentado na legislação." } }
+        drawWrappedText(fundamentos, paint, indent = 10f)
+        y += 20f
+
+        // --- 3. MEMÓRIA DE CÁLCULO ---
+        checkPageBreak(40f)
+        canvas.drawText("3. DA MEMÓRIA DE CÁLCULO (DANOS E JUROS)", marginX, y, boldPaint)
+        y += 25f
+        
+        drawWrappedText("Abaixo, apresenta-se a memória de cálculo para a apuração do montante devido, considerando correção monetária e juros de mora legais:", paint, indent = 10f)
+        y += 10f
+
+        val calcIndent = 30f
+        canvas.drawText(String.format("• Valor Histórico (Principal): R$ %,.2f", caseEntity.historicalValue), marginX + calcIndent, y, paint)
+        y += 20f
+        canvas.drawText(String.format("• Correção Monetária (INPC): R$ %,.2f", caseEntity.inpcCorrection), marginX + calcIndent, y, paint)
+        y += 20f
+        canvas.drawText(String.format("• Juros de Mora (1%% a.m.): R$ %,.2f", caseEntity.defaultInterest), marginX + calcIndent, y, paint)
+        y += 20f
+        canvas.drawText(String.format("• Dano Material Atualizado: R$ %,.2f", caseEntity.subtotalUpdated), marginX + calcIndent, y, boldPaint)
         y += 30f
 
-        // Divider
-        canvas.drawLine(startX, y, maxX, y, paint)
+        // --- 4. DOS PEDIDOS ---
+        checkPageBreak(40f)
+        canvas.drawText("4. DOS PEDIDOS", marginX, y, boldPaint)
         y += 25f
-
-        paint.color = Color.BLACK
-        paint.textSize = 11f
-
-        // Author/Defendant info
-        canvas.drawText("REQUERENTE: ${caseEntity.authorName} (${if (caseEntity.authorCpf.isNotBlank()) "CPF " + caseEntity.authorCpf else "Pessoa Física"})", startX, y, paint)
-        y += 18f
-        canvas.drawText("REQUERIDO: ${if (caseEntity.defendantName.isNotBlank()) caseEntity.defendantName else "Empresa Ré/Concessionária"}", startX, y, paint)
-        y += 25f
-
-        // Section 1: DOS FATOS
-        canvas.drawText("1. DOS FATOS", startX, y, headerPaint)
+        
+        drawWrappedText("Diante do exposto, requer a Vossa Excelência:", paint, indent = 10f)
+        y += 10f
+        
+        val pedidosDefault = mutableListOf(
+            "a) A citação da parte Requerida para comparecer à audiência de conciliação e, querendo, apresentar defesa, sob pena de revelia;",
+            "b) A procedência da ação para condenar a Requerida ao pagamento do Dano Material atualizado no valor de R$ %,.2f;".format(caseEntity.subtotalUpdated)
+        )
+        if (caseEntity.suggestedMoralDamages > 0) {
+            pedidosDefault.add("c) A condenação da Requerida ao pagamento de compensação por Danos Morais no importe de R$ %,.2f;".format(caseEntity.suggestedMoralDamages))
+        }
+        
+        val pedidos = caseEntity.pedidosText.ifBlank { pedidosDefault.joinToString("\n") }
+        drawWrappedText(pedidos, paint, indent = 30f)
         y += 20f
-        val fatosLines = wrapText(caseEntity.fatosText.ifBlank { "Sem fatos registrados." }, paint, 490f)
-        for (line in fatosLines) {
-            if (y > 780f) break
-            canvas.drawText(line, startX + 10f, y, paint)
-            y += 16f
-        }
-        y += 15f
 
-        // Section 2: DOS FUNDAMENTOS
-        if (y < 780f) {
-            canvas.drawText("2. DOS FUNDAMENTOS JURÍDICOS", startX, y, headerPaint)
-            y += 20f
-            val fundLines = wrapText(caseEntity.fundamentosText.ifBlank { "Fundamentado na legislação do consumidor e Código Civil." }, paint, 490f)
-            for (line in fundLines) {
-                if (y > 780f) break
-                canvas.drawText(line, startX + 10f, y, paint)
-                y += 16f
-            }
-            y += 15f
-        }
-
-        // Section 3: DOS CÁLCULOS E PEDIDOS
-        if (y < 780f) {
-            canvas.drawText("3. DOS PEDIDOS E VALOR DA CAUSA", startX, y, headerPaint)
-            y += 20f
-            canvas.drawText("• Dano Material (atualizado): R$ %.2f".format(caseEntity.subtotalUpdated), startX + 10f, y, paint)
-            y += 16f
-            canvas.drawText("• Danos Morais Sugeridos: R$ %.2f".format(caseEntity.suggestedMoralDamages), startX + 10f, y, paint)
-            y += 16f
-            val totalCausa = caseEntity.subtotalUpdated + caseEntity.suggestedMoralDamages
-            canvas.drawText("• Valor Total da Causa: R$ %.2f".format(totalCausa), startX + 10f, y, paint)
-            y += 20f
-
-            val pedLines = wrapText(caseEntity.pedidosText, paint, 490f)
-            for (line in pedLines) {
-                if (y > 780f) break
-                canvas.drawText(line, startX + 10f, y, paint)
-                y += 16f
-            }
-            y += 30f
-        }
-
-        // Signature line
-        if (y < 780f) {
-            canvas.drawLine(200f, y, 400f, y, paint)
-            y += 15f
-            val sigPaint = Paint(paint)
-            sigPaint.textSize = 10f
-            canvas.drawText("Assinatura do Requerente", 240f, y, sigPaint)
-        }
+        val totalValue = caseEntity.subtotalUpdated + caseEntity.suggestedMoralDamages
+        checkPageBreak(60f)
+        canvas.drawText("Dá-se à causa o valor de R$ %,.2f.".format(totalValue), marginX, y, boldPaint)
+        y += 40f
+        
+        // --- Assinatura ---
+        checkPageBreak(120f)
+        canvas.drawText("Termos em que,", marginX, y, paint)
+        y += 20f
+        canvas.drawText("Pede deferimento.", marginX, y, paint)
+        y += 60f
+        
+        val centerX = pageWidth / 2f
+        canvas.drawLine(centerX - 120f, y, centerX + 120f, y, paint)
+        y += 20f
+        
+        val centerPaint = Paint(paint).apply { textAlign = Paint.Align.CENTER }
+        canvas.drawText(authorName, centerX, y, centerPaint)
+        y += 20f
+        canvas.drawText("Requerente", centerX, y, centerPaint)
 
         document.finishPage(page)
 
@@ -136,6 +185,10 @@ object PdfExportManager {
         val result = mutableListOf<String>()
         val paragraphs = text.split("\n")
         for (paragraph in paragraphs) {
+            if (paragraph.isBlank()) {
+                result.add("")
+                continue
+            }
             val words = paragraph.split(" ")
             var currentLine = ""
             for (word in words) {
@@ -144,7 +197,9 @@ object PdfExportManager {
                 if (measure <= maxWidth) {
                     currentLine = testLine
                 } else {
-                    if (currentLine.isNotEmpty()) result.add(currentLine)
+                    if (currentLine.isNotEmpty()) {
+                        result.add(currentLine)
+                    }
                     currentLine = word
                 }
             }

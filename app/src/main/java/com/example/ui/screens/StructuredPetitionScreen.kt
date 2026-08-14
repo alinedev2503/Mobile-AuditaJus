@@ -108,10 +108,10 @@ fun StructuredPetitionScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("paper_petition_preview_card"),
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(20.dp),
                         colors = CardDefaults.cardColors(containerColor = Color(0xFFFCFDFE)),
                         border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
                         Column(
                             modifier = Modifier.padding(20.dp),
@@ -126,7 +126,7 @@ fun StructuredPetitionScreen(
                                 )
                             )
 
-                            Divider(color = MaterialTheme.colorScheme.outlineVariant)
+                            Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
                             Text(
                                 text = "PETIÇÃO INICIAL - JEC",
@@ -197,7 +197,11 @@ fun StructuredPetitionScreen(
                                 .weight(1f)
                                 .height(50.dp)
                                 .testTag("download_petition_pdf_button"),
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = Color.White
+                            ),
+                            shape = RoundedCornerShape(16.dp)
                         ) {
                             Icon(imageVector = Icons.Default.PictureAsPdf, contentDescription = null)
                             Spacer(modifier = Modifier.width(6.dp))
@@ -211,11 +215,12 @@ fun StructuredPetitionScreen(
                             modifier = Modifier
                                 .weight(1f)
                                 .height(50.dp)
-                                .testTag("share_petition_pdf_button")
+                                .testTag("share_petition_pdf_button"),
+                            shape = RoundedCornerShape(16.dp)
                         ) {
                             Icon(imageVector = Icons.Default.Share, contentDescription = null)
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Compartilhar")
+                            Text("Compartilhar", fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -226,11 +231,12 @@ fun StructuredPetitionScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("next_steps_checklist_card"),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest)
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                     ) {
                         Column(
-                            modifier = Modifier.padding(16.dp),
+                            modifier = Modifier.padding(18.dp),
                             verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             Text(

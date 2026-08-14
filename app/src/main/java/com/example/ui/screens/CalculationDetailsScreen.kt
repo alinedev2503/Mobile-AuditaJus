@@ -78,12 +78,13 @@ fun CalculationDetailsScreen(
                 item {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(20.dp),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                     ) {
                         Column(
-                            modifier = Modifier.padding(16.dp),
+                            modifier = Modifier.padding(18.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             Text(
@@ -129,12 +130,13 @@ fun CalculationDetailsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("receipt_breakdown_card"),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(20.dp),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                     ) {
                         Column(
-                            modifier = Modifier.padding(16.dp),
+                            modifier = Modifier.padding(18.dp),
                             verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             Text(
@@ -145,7 +147,7 @@ fun CalculationDetailsScreen(
                                 )
                             )
 
-                            Divider(color = MaterialTheme.colorScheme.outlineVariant)
+                            Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -171,7 +173,7 @@ fun CalculationDetailsScreen(
                                 Text("+ R$ %.2f".format(current.defaultInterest), style = MaterialTheme.typography.bodyMedium)
                             }
 
-                            Divider(color = MaterialTheme.colorScheme.outlineVariant)
+                            Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -185,8 +187,8 @@ fun CalculationDetailsScreen(
                                 Text(
                                     text = "R$ %.2f".format(current.subtotalUpdated),
                                     style = MaterialTheme.typography.titleLarge.copy(
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.primaryContainer
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = MaterialTheme.colorScheme.primary
                                     )
                                 )
                             }
@@ -200,8 +202,9 @@ fun CalculationDetailsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("moral_damages_card"),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFDAE2FD))
+                        shape = RoundedCornerShape(24.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                     ) {
                         Column(
                             modifier = Modifier.padding(20.dp),
@@ -214,13 +217,13 @@ fun CalculationDetailsScreen(
                                 Icon(
                                     imageVector = Icons.Default.Gavel,
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
                                 )
                                 Text(
                                     text = "Danos Morais Sugeridos",
                                     style = MaterialTheme.typography.titleMedium.copy(
                                         fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.primary
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer
                                     )
                                 )
                             }
@@ -229,13 +232,13 @@ fun CalculationDetailsScreen(
                                 text = "R$ %.2f".format(current.suggestedMoralDamages),
                                 style = MaterialTheme.typography.headlineLarge.copy(
                                     fontWeight = FontWeight.ExtraBold,
-                                    color = MaterialTheme.colorScheme.primary
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
                                 )
                             )
 
                             Text(
                                 text = "Estimativa fundamentada na jurisprudência consolidada dos Juizados Especiais Cíveis para ${current.category}.",
-                                style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSecondaryContainer)
+                                style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f))
                             )
                         }
                     }
@@ -245,11 +248,12 @@ fun CalculationDetailsScreen(
                 item {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest)
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                     ) {
                         Column(
-                            modifier = Modifier.padding(16.dp),
+                            modifier = Modifier.padding(18.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
@@ -261,13 +265,13 @@ fun CalculationDetailsScreen(
                             )
                             Surface(
                                 color = MaterialTheme.colorScheme.surfaceContainer,
-                                shape = RoundedCornerShape(8.dp)
+                                shape = RoundedCornerShape(12.dp)
                             ) {
                                 Text(
                                     text = current.legalBasis.ifBlank { "Art. 42, CDC | Súmula 297, STJ" },
-                                    modifier = Modifier.padding(12.dp),
+                                    modifier = Modifier.padding(14.dp),
                                     style = MaterialTheme.typography.bodyMedium.copy(
-                                        fontWeight = FontWeight.Medium,
+                                        fontWeight = FontWeight.SemiBold,
                                         color = MaterialTheme.colorScheme.primary
                                     )
                                 )
@@ -283,16 +287,37 @@ fun CalculationDetailsScreen(
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Button(
+                            onClick = { viewModel.triggerGeminiAnalysis(caseId) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(52.dp)
+                                .testTag("analyze_case_button"),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            ),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Icon(imageVector = Icons.Default.AutoAwesome, contentDescription = null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Analisar Fatos com Inteligência Artificial", fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                        }
+
+                        Button(
                             onClick = { onNavigateToPetition(caseId) },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(50.dp)
+                                .height(52.dp)
                                 .testTag("proceed_to_petition_button"),
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = Color.White
+                            ),
+                            shape = RoundedCornerShape(16.dp)
                         ) {
                             Icon(imageVector = Icons.Default.Description, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Prosseguir para Petição Estruturada", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            Text("Prosseguir para Petição Estruturada", fontSize = 15.sp, fontWeight = FontWeight.Bold)
                         }
 
                         OutlinedButton(
@@ -300,11 +325,12 @@ fun CalculationDetailsScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(48.dp)
-                                .testTag("adjust_values_button")
+                                .testTag("adjust_values_button"),
+                            shape = RoundedCornerShape(16.dp)
                         ) {
                             Icon(imageVector = Icons.Default.Edit, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Ajustar Valores Manualmente")
+                            Text("Ajustar Valores Manualmente", fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -334,10 +360,27 @@ fun AdjustCalculationsDialog(
     onDismiss: () -> Unit,
     onSave: (Double, Double, Double, Double) -> Unit
 ) {
-    var matStr by remember { mutableStateOf(current.historicalValue.toString()) }
-    var inpcStr by remember { mutableStateOf(current.inpcCorrection.toString()) }
-    var jurosStr by remember { mutableStateOf(current.defaultInterest.toString()) }
-    var moralStr by remember { mutableStateOf(current.suggestedMoralDamages.toString()) }
+    fun formatCurrency(input: String): String {
+        val cleanString = input.replace(Regex("[^0-9]"), "")
+        if (cleanString.isEmpty()) return "0,00"
+        val parsed = cleanString.toDoubleOrNull() ?: 0.0
+        return String.format(java.util.Locale("pt", "BR"), "%,.2f", parsed / 100)
+    }
+
+    var matStr by remember { mutableStateOf(formatCurrency(String.format(java.util.Locale.US, "%.2f", current.historicalValue).replace(".", ""))) }
+    var inpcStr by remember { mutableStateOf(formatCurrency(String.format(java.util.Locale.US, "%.2f", current.inpcCorrection).replace(".", ""))) }
+    var jurosStr by remember { mutableStateOf(formatCurrency(String.format(java.util.Locale.US, "%.2f", current.defaultInterest).replace(".", ""))) }
+    var moralStr by remember { mutableStateOf(formatCurrency(String.format(java.util.Locale.US, "%.2f", current.suggestedMoralDamages).replace(".", ""))) }
+
+    val parseCurrency = { str: String ->
+        str.replace(".", "").replace(",", ".").toDoubleOrNull() ?: 0.0
+    }
+
+    val isMatValid = parseCurrency(matStr) >= 0.0
+    val isInpcValid = parseCurrency(inpcStr) >= 0.0
+    val isJurosValid = parseCurrency(jurosStr) >= 0.0
+    val isMoralValid = parseCurrency(moralStr) >= 0.0
+    val isValid = isMatValid && isInpcValid && isJurosValid && isMoralValid
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -349,30 +392,34 @@ fun AdjustCalculationsDialog(
             ) {
                 OutlinedTextField(
                     value = matStr,
-                    onValueChange = { matStr = it },
+                    onValueChange = { matStr = formatCurrency(it) },
                     label = { Text("Valor Histórico Dano Material (R$)") },
                     singleLine = true,
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = inpcStr,
-                    onValueChange = { inpcStr = it },
+                    onValueChange = { inpcStr = formatCurrency(it) },
                     label = { Text("Correção INPC (R$)") },
                     singleLine = true,
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = jurosStr,
-                    onValueChange = { jurosStr = it },
+                    onValueChange = { jurosStr = formatCurrency(it) },
                     label = { Text("Juros Moratórios (R$)") },
                     singleLine = true,
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = moralStr,
-                    onValueChange = { moralStr = it },
+                    onValueChange = { moralStr = formatCurrency(it) },
                     label = { Text("Danos Morais Sugeridos (R$)") },
                     singleLine = true,
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -380,12 +427,13 @@ fun AdjustCalculationsDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    val mat = matStr.toDoubleOrNull() ?: current.historicalValue
-                    val inpc = inpcStr.toDoubleOrNull() ?: current.inpcCorrection
-                    val juros = jurosStr.toDoubleOrNull() ?: current.defaultInterest
-                    val moral = moralStr.toDoubleOrNull() ?: current.suggestedMoralDamages
+                    val mat = parseCurrency(matStr)
+                    val inpc = parseCurrency(inpcStr)
+                    val juros = parseCurrency(jurosStr)
+                    val moral = parseCurrency(moralStr)
                     onSave(mat, inpc, juros, moral)
-                }
+                },
+                enabled = isValid
             ) {
                 Text("Salvar")
             }

@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "Contador Jurídico Pro"
+rootProject.name = "AuditaJus"
 
 include(":app")

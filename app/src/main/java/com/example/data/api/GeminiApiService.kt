@@ -1,6 +1,6 @@
 package com.example.data.api
 
-import com.example.BuildConfig
+import com.squareup.moshi.JsonClass
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -9,27 +9,38 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 import java.util.concurrent.TimeUnit
 
+@JsonClass(generateAdapter = true)
 data class GeminiPart(
     val text: String? = null,
     val inlineData: InlineData? = null
 )
 
+@JsonClass(generateAdapter = true)
 data class InlineData(
     val mimeType: String,
     val data: String
 )
 
+@JsonClass(generateAdapter = true)
 data class GeminiContent(
     val parts: List<GeminiPart>
 )
 
+@JsonClass(generateAdapter = true)
 data class GeminiRequest(
     val contents: List<GeminiContent>
 )
 
+@JsonClass(generateAdapter = true)
 data class CandidatePart(val text: String? = null)
+
+@JsonClass(generateAdapter = true)
 data class CandidateContent(val parts: List<CandidatePart>? = null)
+
+@JsonClass(generateAdapter = true)
 data class Candidate(val content: CandidateContent? = null)
+
+@JsonClass(generateAdapter = true)
 data class GeminiResponse(val candidates: List<Candidate>? = null)
 
 interface GeminiApiService {
