@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Onboarding - Contador Jurídico Pro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Domine:wght@400;600;700&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-error-container": "#ffdad6", "on-primary-container": "#eeefff", "surface-container": "#1d2022", "surface-bright": "#363a3b", "on-primary": "#002a78", "outline-variant": "#434655", "secondary-fixed": "#d5e3fd", "on-primary-fixed-variant": "#003ea8", error: "#ffb4ab", "primary-fixed": "#dbe1ff", "tertiary-container": "#656d84", "on-secondary-fixed": "#0d1c2f", "surface-container-highest": "#323537", "secondary-fixed-dim": "#b9c7e0", "on-error": "#690005", "surface-container-low": "#191c1e", "on-primary-fixed": "#00174b", "on-background": "#e0e3e5", "on-tertiary": "#283044", "error-container": "#93000a", "inverse-surface": "#e0e3e5", "on-secondary-fixed-variant": "#3a485c", outline: "#8d90a0", "surface-container-high": "#272a2c", "inverse-primary": "#0053db", "surface-variant": "#323537", "on-surface": "#e0e3e5", "secondary-container": "#3c4a5e", tertiary: "#bec6e0", "on-surface-variant": "#c3c6d7", primary: "#b4c5ff", "tertiary-fixed": "#dae2fd", "on-tertiary-container": "#eef0ff", "primary-fixed-dim": "#b4c5ff", "surface-dim": "#101415", "primary-container": "#2563eb", "inverse-on-surface": "#2d3133", surface: "#101415", "on-tertiary-fixed-variant": "#3f465c", background: "#101415", "on-secondary-container": "#abb9d2", "surface-container-lowest": "#0b0f10", "on-secondary": "#233144", secondary: "#b9c7e0", "tertiary-fixed-dim": "#bec6e0", "surface-tint": "#b4c5ff", "on-tertiary-fixed": "#131b2e"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {unit: "4px", "container-max": "1280px", gutter: "24px", sm: "8px", "margin-mobile": "16px", md: "16px", xs: "4px", xl: "40px", lg: "24px"}, fontFamily: {"headline-md": ["Domine"], "body-md": ["Work Sans"], "headline-lg-mobile": ["Domine"], "label-sm": ["Work Sans"], "body-sm": ["Work Sans"], "display-lg": ["Domine"], "label-md": ["Work Sans"], "headline-lg": ["Domine"], "body-lg": ["Work Sans"], headline: ["Inter"], display: ["Inter"], body: ["Inter"], label: ["Inter"]}, fontSize: {"headline-md": ["24px", {lineHeight: "32px", fontWeight: "600"}], "body-md": ["16px", {lineHeight: "24px", fontWeight: "400"}], "headline-lg-mobile": ["24px", {lineHeight: "32px", fontWeight: "600"}], "label-sm": ["12px", {lineHeight: "16px", fontWeight: "500"}], "body-sm": ["14px", {lineHeight: "20px", fontWeight: "400"}], "display-lg": ["48px", {lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700"}], "label-md": ["14px", {lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600"}], "headline-lg": ["32px", {lineHeight: "40px", fontWeight: "600"}], "body-lg": ["18px", {lineHeight: "28px", fontWeight: "400"}]}}}};</script>
+<style>
+        body { font-family: 'Work Sans', sans-serif; background-color: #0b1326; color: #dae2fd; }
+        .carousel-slide { transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out; }
+        .hidden-slide { opacity: 0; pointer-events: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: translateX(20px); }
+        .active-slide { opacity: 1; pointer-events: auto; position: relative; transform: translateX(0); z-index: 10; }
+        .dot { transition: background-color 0.3s ease, width 0.3s ease; }
+        .dot.active { background-color: #4d8eff; width: 24px; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col justify-between overflow-x-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top App Bar (Semantic Shell Rule: Suppressed on transactional/onboarding screens, but included minimal version for context if needed, though instructions say "Linear/Transactional: Login, Sign-up, Onboarding... Automatic Suppression. So we suppress the main navs, but keep a skip button at the top). -->
+<header class="w-full flex items-center justify-between px-4 py-4 md:px-8 absolute top-0 z-50">
+<div class="text-[20px] font-bold text-primary tracking-tight font-headline-md">Contador Jurídico Pro</div>
+<button class="text-on-surface-variant text-[14px] font-medium hover:text-primary transition-colors py-2 px-4 rounded-full tap-highlight-transparent font-label-md" id="skipBtn">
+            Pular
+        </button>
+</header>
+<!-- Main Content Carousel -->
+<main class="flex-grow flex flex-col items-center justify-center w-full max-w-[600px] mx-auto px-6 pt-24 pb-10 relative h-full min-h-[707px]">
+<div class="relative w-full h-full flex-grow flex items-center justify-center min-h-[400px]" id="carouselContainer">
+<!-- Step 1 -->
+<div class="carousel-slide active-slide flex flex-col items-center text-center w-full" id="slide-0">
+<div class="w-full aspect-square max-w-[320px] bg-surface-container-low rounded-[24px] mb-8 shadow-sm overflow-hidden flex items-center justify-center relative">
+<img class="object-cover w-full h-full opacity-90 transition-opacity duration-300 mix-blend-luminosity" data-alt="A professional digital illustration in a minimalist, light-mode style featuring abstract judicial concepts. A stylized scale of justice resting gently on a glowing smartphone screen. The color palette is composed of pristine whites, soft light blues (#F0F7FF), and deep navy anchors (#0F172A). The lighting is bright, soft, and modern, conveying reliability and technological ease in navigating legal complexities." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKzQP2MdkNNv58elLaZipJq82pIySn4jG3_p3iGg8oX23I6mrnw-KlyXW9y1kV7HUqO-XsnwFSzm5LadkcGJsdE7UQ6Vj_hUPa2YrZuNHRUjeLoapvu2kD4L5UKiMVzIXf-rUEx5PZ0r2mNpapGeoNVDJYCQJavuqkOvIFeZufP7W7XWqrnL6_G0_lKsLDsJ31Eapuer94rVVm_s2r2wrYRhVm1opADni0YSInos1Wn7iNpx_pK40D"/>
+</div>
+<h2 class="text-headline-lg-mobile md:text-headline-lg mb-4 text-on-surface tracking-tight font-headline-md">Justiça na palma da mão</h2>
+<p class="text-body-md md:text-body-lg text-on-surface-variant leading-relaxed font-body-md">
+                    Audite contratos e faturas com facilidade. Transforme documentos complexos em resumos claros e acionáveis para sua defesa.
+                </p>
+</div>
+<!-- Step 2 -->
+<div class="carousel-slide hidden-slide flex flex-col items-center text-center w-full" id="slide-1">
+<div class="w-full aspect-square max-w-[320px] bg-surface-container-low rounded-[24px] mb-8 shadow-sm overflow-hidden flex items-center justify-center relative">
+<img class="object-cover w-full h-full opacity-90 transition-opacity duration-300 mix-blend-luminosity" data-alt="A sophisticated, minimalist 3D rendering of an abstract calculator blending seamlessly into legal documents. Clean geometric shapes represent data points and financial figures floating above a crisp white background. The scene is illuminated by soft, bright studio lighting, emphasizing a trustworthy aesthetic. Accents of primary blue (#2563EB) contrast against neutral greys and whites, symbolizing precise automated damage calculations." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXmywlliwIvFGYHmaN8h6hXjq2L3DOf_cce1SnTkWEB0cMKtKFtBJ0Z9qEY9p3L5_Tvk3BUV4sZkTnJmxZmdqUwnRNJOcLOU-bCSxJPtFI_d_0ZupJj-HeEFG2MSYQ7ddYYUPlRubsTYaznwSNhkGy5KbahXa5LyjqrbnbOWNOwnCjX99NvCgYhUpeu57Zd84APVmVF3Y-B0FLQ_B6alzLszLqlwfg8xcKqjvAdtb3m3ItzrCDdsay"/>
+</div>
+<h2 class="text-headline-lg-mobile md:text-headline-lg mb-4 text-on-surface tracking-tight font-headline-md">Cálculos Precisos</h2>
+<p class="text-body-md md:text-body-lg text-on-surface-variant leading-relaxed font-body-md">
+                    Deixe a matemática conosco. Realize cálculos automatizados de danos e juros para pequenas causas com precisão judicial.
+                </p>
+</div>
+<!-- Step 3 -->
+<div class="carousel-slide hidden-slide flex flex-col items-center text-center w-full" id="slide-2">
+<div class="w-full aspect-square max-w-[320px] bg-surface-container-low rounded-[24px] mb-8 shadow-sm overflow-hidden flex items-center justify-center relative">
+<img class="object-cover w-full h-full opacity-90 transition-opacity duration-300 mix-blend-luminosity" data-alt="A highly detailed, modern vector illustration showing a glowing, perfectly formatted legal document emerging from a sleek digital tablet. The environment is a clean, bright, white and light blue (#F0F7FF) abstract space, conveying a sense of order and readiness. A subtle glowing checkmark signifies completion. The lighting is pristine and professional, emphasizing the 'one-click PDF generation' capability for court readiness." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQqXga_EGdhUcVfH1BB70v9xJ2Ab0k_3PkiwQOLovFvT_VRH5baxBfn1htZLqd-ccgtkfVOBisG5ICcqBwEvhE3FBuy9iZQg8vPrtQXwFNoMSlYuURiqB1bnLQL_I1hA1RtVNQcaS3UGQK4V9e8yHDuZA_hG9TwTFciWeVh1ncuVOf6s7BHGF0i5qgGtymxo6vNDbjw7HLXp3VaqosyFLT54YBh-C7fnQxgZnAGPK9s3En6n4Bcgfa"/>
+</div>
+<h2 class="text-headline-lg-mobile md:text-headline-lg mb-4 text-on-surface tracking-tight font-headline-md">Petição Pronta</h2>
+<p class="text-body-md md:text-body-lg text-on-surface-variant leading-relaxed font-body-md">
+                    Gere PDFs formatados e prontos para o tribunal com apenas um clique. Sua documentação estruturada e profissional instantaneamente.
+                </p>
+</div>
+</div>
+</main>
+<!-- Bottom Controls -->
+<footer class="w-full max-w-[600px] mx-auto px-6 pb-12 pt-4 flex flex-col items-center z-20">
+<!-- Progress Indicators -->
+<div class="flex space-x-2 mb-8">
+<div class="dot active h-2 w-2 rounded-full bg-surface-variant cursor-pointer transition-all duration-300 ease-out" data-index="0"></div>
+<div class="dot h-2 w-2 rounded-full bg-surface-variant cursor-pointer transition-all duration-300 ease-out" data-index="1"></div>
+<div class="dot h-2 w-2 rounded-full bg-surface-variant cursor-pointer transition-all duration-300 ease-out" data-index="2"></div>
+</div>
+<!-- Action Button -->
+<button class="w-full bg-primary-container text-on-primary-container font-bold py-4 px-8 rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.05)] hover:bg-primary transition-colors active:scale-95 flex items-center justify-center space-x-2" id="nextBtn">
+<span class="text-label-md tracking-wide font-label-md" id="btnText">Próximo</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_forward</span>
+</button>
+</footer>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dots = document.querySelectorAll('.dot');
+            const nextBtn = document.getElementById('nextBtn');
+            const btnText = document.getElementById('btnText');
+            const skipBtn = document.getElementById('skipBtn');
+            const icon = nextBtn.querySelector('.material-symbols-outlined');
+            
+            let currentSlide = 0;
+            const totalSlides = slides.length;
+
+            function updateCarousel(newIndex) {
+                if (newIndex < 0 || newIndex >= totalSlides) return;
+
+                // Animate out current
+                slides[currentSlide].classList.remove('active-slide');
+                slides[currentSlide].classList.add('hidden-slide');
+                slides[currentSlide].style.transform = 'translateX(-20px)';
+                dots[currentSlide].classList.remove('active');
+                dots[currentSlide].classList.replace('bg-primary-container', 'bg-surface-variant');
+
+                // Animate in new
+                currentSlide = newIndex;
+                slides[currentSlide].classList.remove('hidden-slide');
+                slides[currentSlide].classList.add('active-slide');
+                // Reset transform for the incoming slide
+                setTimeout(() => { slides[currentSlide].style.transform = 'translateX(0)'; }, 50);
+                
+                dots[currentSlide].classList.add('active');
+                dots[currentSlide].classList.replace('bg-surface-variant', 'bg-primary-container');
+
+                // Update Button State
+                if (currentSlide === totalSlides - 1) {
+                    btnText.textContent = 'Começar Agora';
+                    icon.textContent = 'check_circle';
+                    skipBtn.style.opacity = '0';
+                    skipBtn.style.pointerEvents = 'none';
+                } else {
+                    btnText.textContent = 'Próximo';
+                    icon.textContent = 'arrow_forward';
+                    skipBtn.style.opacity = '1';
+                    skipBtn.style.pointerEvents = 'auto';
+                }
+            }
+
+            nextBtn.addEventListener('click', () => {
+                if (currentSlide < totalSlides - 1) {
+                    updateCarousel(currentSlide + 1);
+                } else {
+                    // Action to finish onboarding
+                    console.log('Onboarding Complete - Proceed to Login/Home');
+                    nextBtn.classList.add('opacity-80', 'scale-95');
+                    setTimeout(() => nextBtn.classList.remove('opacity-80', 'scale-95'), 200);
+                }
+            });
+
+            skipBtn.addEventListener('click', () => {
+                updateCarousel(totalSlides - 1);
+            });
+
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    updateCarousel(index);
+                });
+            });
+        });
+    </script>
+</body></html>

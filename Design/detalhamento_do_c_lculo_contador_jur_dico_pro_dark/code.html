@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Detalhamento do Cálculo - Contador Jurídico Pro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "inverse-on-surface": "#eaf1ff",
+                      "surface-container-highest": "#d3e4fe",
+                      "on-primary-fixed": "#00174b",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container": "#e5eeff",
+                      "surface-container-high": "#dce9ff",
+                      "on-background": "#0b1c30",
+                      "on-secondary-fixed-variant": "#3f465c",
+                      "on-tertiary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-error": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "primary": "#004ac6",
+                      "primary-container": "#2563eb",
+                      "on-primary-container": "#eeefff",
+                      "outline": "#737686",
+                      "surface-bright": "#f8f9ff",
+                      "on-secondary": "#ffffff",
+                      "surface-dim": "#cbdbf5",
+                      "error": "#ba1a1a",
+                      "on-surface-variant": "#434655",
+                      "tertiary": "#4e565c",
+                      "on-tertiary-fixed": "#151c22",
+                      "on-primary-fixed-variant": "#003ea8",
+                      "on-secondary-container": "#5c647a",
+                      "on-secondary-fixed": "#131b2e",
+                      "on-tertiary-fixed-variant": "#40484e",
+                      "secondary": "#565e74",
+                      "secondary-container": "#dae2fd",
+                      "secondary-fixed": "#dae2fd",
+                      "on-tertiary-container": "#eaf1f9",
+                      "secondary-fixed-dim": "#bec6e0",
+                      "background": "#f8f9ff",
+                      "outline-variant": "#c3c6d7",
+                      "primary-fixed-dim": "#b4c5ff",
+                      "tertiary-container": "#676e75",
+                      "inverse-surface": "#213145",
+                      "surface-tint": "#0053db",
+                      "on-error-container": "#93000a",
+                      "tertiary-fixed": "#dce3eb",
+                      "inverse-primary": "#b4c5ff",
+                      "on-surface": "#0b1c30",
+                      "surface-container-low": "#eff4ff",
+                      "surface-variant": "#d3e4fe",
+                      "primary-fixed": "#dbe1ff",
+                      "surface": "#f8f9ff",
+                      "tertiary-fixed-dim": "#c0c7cf"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "unit": "4px",
+                      "margin-desktop": "48px",
+                      "gutter": "24px",
+                      "container-max-width": "1200px",
+                      "margin-mobile": "16px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["Inter"],
+                      "label-bold": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-md": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "label-bold": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background dark:bg-[#101415] text-on-background dark:text-gray-100 min-h-screen pb-24 md:pb-8 flex flex-col">
+<!-- Header (Transactional Intent - Minimal Nav) -->
+<header class="bg-surface dark:bg-[#191c1e] border-b border-outline-variant dark:border-gray-800 shadow-sm sticky top-0 z-50">
+<div class="flex items-center px-margin-mobile md:px-margin-desktop w-full max-w-container-max-width mx-auto h-16">
+<button aria-label="Voltar" class="p-2 mr-4 rounded-full hover:bg-surface-container-low dark:hover:bg-gray-800 transition-colors text-primary dark:text-primary-fixed-dim">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface dark:text-gray-100 flex-grow">Detalhamento do Cálculo</h1>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-container-max-width mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12 flex flex-col gap-8">
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Column: Data & Calculations -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<!-- Resumo do Dano Material -->
+<section class="bg-surface-container-lowest dark:bg-[#0b0f10] rounded-xl shadow-sm border border-outline-variant dark:border-gray-800 p-6">
+<div class="flex items-center justify-between mb-6 pb-4 border-b border-outline-variant dark:border-gray-800">
+<div>
+<h2 class="font-headline-md text-[20px] font-semibold text-on-surface dark:text-gray-100">Dano Material</h2>
+<p class="font-body-md text-on-surface-variant dark:text-gray-400 text-sm mt-1">Valores cobrados indevidamente</p>
+</div>
+<div class="text-right">
+<span class="block font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary dark:text-blue-400">R$ 450,00</span>
+</div>
+</div>
+<ul class="flex flex-col gap-3">
+<li class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low dark:hover:bg-gray-800 transition-colors group">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-error-container dark:bg-red-900/30 text-on-error-container dark:text-red-400 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+</div>
+<span class="font-body-md text-on-surface dark:text-gray-200 font-medium">Taxa de Iluminação Duplicada</span>
+</div>
+<span class="font-label-bold text-label-bold text-on-surface dark:text-gray-100">R$ 150,00</span>
+</li>
+<li class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low dark:hover:bg-gray-800 transition-colors group">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-error-container dark:bg-red-900/30 text-on-error-container dark:text-red-400 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">warning</span>
+</div>
+<span class="font-body-md text-on-surface dark:text-gray-200 font-medium">Multa Indevida (Atraso Fictício)</span>
+</div>
+<span class="font-label-bold text-label-bold text-on-surface dark:text-gray-100">R$ 300,00</span>
+</li>
+</ul>
+</section>
+<!-- Cálculo de Juros e Correção (Receipt Style) -->
+<section class="bg-[#F0F7FF] dark:bg-blue-900/10 rounded-xl shadow-sm border border-primary-fixed-dim dark:border-blue-900/50 p-6 relative overflow-hidden">
+<!-- Deco element -->
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary-fixed dark:bg-blue-900/30 rounded-full opacity-50 blur-xl"></div>
+<h3 class="font-headline-md text-[18px] font-semibold text-on-surface dark:text-gray-100 mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-blue-400">analytics</span>
+                        Atualização Monetária e Juros
+                    </h3>
+<div class="bg-surface-container-lowest dark:bg-[#0b0f10] rounded-lg p-5 border border-outline-variant dark:border-gray-800 font-mono text-sm shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
+<div class="flex justify-between py-2 border-b border-dashed border-outline-variant dark:border-gray-800">
+<span class="text-on-surface-variant dark:text-gray-400">Valor Histórico</span>
+<span class="text-on-surface dark:text-gray-200 font-medium">R$ 450,00</span>
+</div>
+<div class="flex justify-between py-2 border-b border-dashed border-outline-variant dark:border-gray-800">
+<span class="text-on-surface-variant dark:text-gray-400">Correção Monetária (INPC)</span>
+<span class="text-on-surface dark:text-gray-200 font-medium">R$ 32,45</span>
+</div>
+<div class="flex justify-between py-2 border-b border-dashed border-outline-variant dark:border-gray-800">
+<span class="text-on-surface-variant dark:text-gray-400">Juros Moratórios (1% a.m.)</span>
+<span class="text-on-surface dark:text-gray-200 font-medium">R$ 27,00</span>
+</div>
+<div class="flex justify-between pt-4 mt-2">
+<span class="font-bold text-on-surface dark:text-gray-100">Subtotal Atualizado</span>
+<span class="font-bold text-primary dark:text-blue-400">R$ 509,45</span>
+</div>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant dark:text-gray-500 mt-3 text-right">
+                        * Cálculo retroativo à data do evento (12 meses)
+                    </p>
+</section>
+</div>
+<!-- Right Column: Morals & Actions -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- Estimativa de Danos Morais (Highlight Card) -->
+<section class="bg-primary-container dark:bg-blue-600/20 text-on-primary-container dark:text-blue-100 rounded-xl shadow-md p-6 relative overflow-hidden flex flex-col justify-center h-full min-h-[280px]">
+<!-- Subtle background pattern using CSS radial gradient -->
+<div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent pointer-events-none"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-2 opacity-90">
+<span class="material-symbols-outlined text-on-primary-container dark:text-blue-200">balance</span>
+<h3 class="font-label-bold text-label-bold uppercase tracking-wider dark:text-blue-200">Danos Morais Sugeridos</h3>
+</div>
+<div class="my-4">
+<span class="block font-display-lg text-display-lg font-bold text-white">R$ 3.000,00</span>
+</div>
+<div class="bg-black/10 dark:bg-black/30 rounded-lg p-3 mt-4 backdrop-blur-sm border border-white/20 dark:border-white/10">
+<p class="font-body-md text-sm text-white/90 leading-relaxed">
+                                Valor sugerido conforme jurisprudência majoritária do JEC para casos de interrupção indevida ou cobrança abusiva, visando caráter punitivo-pedagógico.
+                            </p>
+</div>
+</div>
+</section>
+<!-- Fundamentação Rápida -->
+<section class="bg-surface-container-lowest dark:bg-[#0b0f10] rounded-xl shadow-sm border border-outline-variant dark:border-gray-800 p-5">
+<h4 class="font-label-bold text-label-bold text-on-surface dark:text-gray-200 mb-3 uppercase tracking-wider text-xs">Fundamentação Legal</h4>
+<div class="flex flex-col gap-3">
+<div class="flex gap-3 items-start">
+<div class="w-6 h-6 rounded bg-surface-container-high dark:bg-gray-800 text-primary dark:text-blue-400 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">gavel</span>
+</div>
+<div>
+<p class="font-label-bold text-label-bold text-on-surface dark:text-gray-200 text-sm">Art. 42, CDC</p>
+<p class="font-body-md text-xs text-on-surface-variant dark:text-gray-400">Devolução em dobro de cobrança indevida.</p>
+</div>
+</div>
+<div class="flex gap-3 items-start">
+<div class="w-6 h-6 rounded bg-surface-container-high dark:bg-gray-800 text-primary dark:text-blue-400 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">policy</span>
+</div>
+<div>
+<p class="font-label-bold text-label-bold text-on-surface dark:text-gray-200 text-sm">Súmula 297, STJ</p>
+<p class="font-body-md text-xs text-on-surface-variant dark:text-gray-400">Aplicação do CDC às instituições financeiras.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Sticky Bottom Actions (Mobile) / Regular flow (Desktop) -->
+<div class="fixed bottom-0 left-0 w-full bg-surface-container-lowest dark:bg-[#191c1e] border-t border-outline-variant dark:border-gray-800 p-4 z-40 md:static md:bg-transparent md:border-none md:p-0 md:mt-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:shadow-none flex flex-col md:flex-row-reverse md:justify-start gap-3">
+<button class="bg-primary-container dark:bg-blue-600 text-on-primary-container dark:text-white font-label-bold text-label-bold rounded-full py-3 px-8 w-full md:w-auto hover:bg-primary dark:hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-2">
+                Prosseguir para Petição
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+<button class="bg-transparent text-secondary dark:text-gray-300 font-label-bold text-label-bold rounded-full py-3 px-8 w-full md:w-auto border border-outline dark:border-gray-600 hover:bg-surface-container-high dark:hover:bg-gray-800 transition-colors text-center">
+                Ajustar Valores Manualmente
+            </button>
+</div>
+</main>
+</body></html>

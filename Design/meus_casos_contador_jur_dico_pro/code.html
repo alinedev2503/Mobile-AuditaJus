@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html class="" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Meus Casos - Contador Jurídico Pro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"surface-container": "#e5eeff", "tertiary-fixed": "#dce3eb", "on-primary-fixed": "#00174b", "surface-variant": "#d3e4fe", "primary-fixed": "#dbe1ff", surface: "#f8f9ff", "on-primary-fixed-variant": "#003ea8", "on-background": "#0b1c30", "surface-dim": "#cbdbf5", tertiary: "#4e565c", "on-surface-variant": "#434655", "surface-container-low": "#eff4ff", error: "#ba1a1a", secondary: "#565e74", "on-tertiary-fixed-variant": "#40484e", "on-tertiary": "#ffffff", "inverse-surface": "#213145", "error-container": "#ffdad6", "tertiary-container": "#676e75", "on-error": "#ffffff", "surface-bright": "#f8f9ff", "secondary-fixed-dim": "#bec6e0", "surface-container-high": "#dce9ff", "on-primary-container": "#eeefff", "on-secondary-fixed-variant": "#3f465c", "on-primary": "#ffffff", "on-surface": "#0b1c30", outline: "#737686", "secondary-container": "#dae2fd", "primary-container": "#2563eb", background: "#f8f9ff", "surface-tint": "#0053db", "on-secondary-fixed": "#131b2e", "inverse-primary": "#b4c5ff", primary: "#004ac6", "primary-fixed-dim": "#b4c5ff", "on-secondary-container": "#5c647a", "on-error-container": "#93000a", "on-tertiary-fixed": "#151c22", "secondary-fixed": "#dae2fd", "surface-container-highest": "#d3e4fe", "on-tertiary-container": "#eaf1f9", "outline-variant": "#c3c6d7", "surface-container-lowest": "#ffffff", "on-secondary": "#ffffff", "inverse-on-surface": "#eaf1ff", "tertiary-fixed-dim": "#c0c7cf"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {unit: "4px", "margin-desktop": "48px", gutter: "24px", "margin-mobile": "16px", "container-max-width": "1200px", lg: "24px", "container-max": "1280px", xs: "4px", sm: "8px", xl: "40px", md: "16px"}, fontFamily: {"headline-lg": ["Domine"], "headline-lg-mobile": ["Domine"], "body-lg": ["Work Sans"], "label-bold": ["Inter"], "body-md": ["Work Sans"], "display-lg": ["Domine"], "label-sm": ["Work Sans"], "headline-md": ["Domine"], "label-md": ["Work Sans"], "body-sm": ["Work Sans"], headline: ["Inter"], display: ["Inter"], body: ["Inter"], label: ["Inter"]}, fontSize: {"headline-lg": ["32px", {lineHeight: "40px", fontWeight: "600"}], "headline-lg-mobile": ["24px", {lineHeight: "32px", fontWeight: "600"}], "body-lg": ["18px", {lineHeight: "28px", fontWeight: "400"}], "label-bold": ["14px", {lineHeight: "20px", letterSpacing: "0.01em", fontWeight: "700"}], "body-md": ["16px", {lineHeight: "24px", fontWeight: "400"}], "display-lg": ["48px", {lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700"}], "label-sm": ["12px", {lineHeight: "16px", fontWeight: "500"}], "headline-md": ["24px", {lineHeight: "32px", fontWeight: "600"}], "label-md": ["14px", {lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600"}], "body-sm": ["14px", {lineHeight: "20px", fontWeight: "400"}]}}}};</script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased min-h-screen flex flex-col pb-20 md:pb-0">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dim shadow-sm docked full-width top-0 w-full z-40 fixed md:relative h-16 flex justify-between items-center px-margin-mobile md:px-margin-desktop max-w-container-max-width mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed" data-weight="fill" style="font-variation-settings: 'FILL' 1;">gavel</span>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Contador Jurídico Pro</h1>
+</div>
+<!-- Desktop Nav -->
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-label-bold text-label-bold text-secondary dark:text-secondary-fixed-dim hover:bg-surface-variant/50 dark:hover:bg-surface-variant/20 transition-colors px-3 py-2 rounded-lg flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px]">home</span>
+                Home
+            </a>
+<a class="font-label-bold text-label-bold text-primary dark:text-primary-fixed font-bold bg-secondary-container dark:bg-primary-container px-4 py-2 rounded-lg flex items-center gap-2 active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">folder_shared</span>
+                My Cases
+            </a>
+<a class="font-label-bold text-label-bold text-secondary dark:text-secondary-fixed-dim hover:bg-surface-variant/50 dark:hover:bg-surface-variant/20 transition-colors px-3 py-2 rounded-lg flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px]">menu_book</span>
+                Guides
+            </a>
+<a class="font-label-bold text-label-bold text-secondary dark:text-secondary-fixed-dim hover:bg-surface-variant/50 dark:hover:bg-surface-variant/20 transition-colors px-3 py-2 rounded-lg flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+                Settings
+            </a>
+</nav>
+<!-- Mobile Profile/Menu Icon (Optional placeholder) -->
+<div class="md:hidden">
+<button class="p-2 text-on-surface">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow pt-24 md:pt-12 px-margin-mobile md:px-margin-desktop max-w-container-max-width mx-auto w-full flex flex-col gap-8 relative">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">My Cases</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage and track the progress of your legal audits.</p>
+</div>
+<!-- Search Bar -->
+<div class="relative w-full md:w-80">
+<span class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent font-body-md text-body-md text-on-surface placeholder-outline transition-all" placeholder="Search cases..." type="text"/>
+</div>
+</div>
+<!-- Filter Tabs -->
+<div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+<button class="px-4 py-2 bg-primary-container text-on-primary-container rounded-full font-label-bold text-label-bold whitespace-nowrap">All Cases</button>
+<button class="px-4 py-2 bg-surface-container border border-outline-variant text-on-surface rounded-full font-label-bold text-label-bold whitespace-nowrap hover:bg-surface-variant transition-colors">Active</button>
+<button class="px-4 py-2 bg-surface-container border border-outline-variant text-on-surface rounded-full font-label-bold text-label-bold whitespace-nowrap hover:bg-surface-variant transition-colors">Completed</button>
+<button class="px-4 py-2 bg-surface-container border border-outline-variant text-on-surface rounded-full font-label-bold text-label-bold whitespace-nowrap hover:bg-surface-variant transition-colors">Archived</button>
+</div>
+<!-- Bento Grid Layout for Cases -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Case Card 1 (Analyzing) -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_6px_rgba(0,0,0,0.05)] border border-outline-variant flex flex-col gap-4 hover:shadow-md transition-shadow group cursor-pointer relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-fixed/30 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+<div class="flex justify-between items-start z-10">
+<span class="px-3 py-1 bg-surface-variant text-primary font-label-sm text-label-sm rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">sync</span>
+                        Analyzing
+                    </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Oct 24, 2023</span>
+</div>
+<div class="z-10">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Conta de Luz Abusiva</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Audit of energy bills from 2022 to identify improper tariff classifications.</p>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant flex justify-between items-center z-10">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center border-2 border-surface-container-lowest font-label-sm text-label-sm font-bold text-primary">DP</div>
+</div>
+<button class="text-primary hover:text-primary-container transition-colors flex items-center gap-1 font-label-bold text-label-bold">
+                        View Details
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Case Card 2 (PDF Ready) -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_6px_rgba(0,0,0,0.05)] border border-outline-variant flex flex-col gap-4 hover:shadow-md transition-shadow group cursor-pointer relative overflow-hidden">
+<div class="flex justify-between items-start z-10">
+<span class="px-3 py-1 bg-[#e8f5e9] text-[#2e7d32] font-label-sm text-label-sm rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">task_alt</span>
+                        PDF Ready
+                    </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Oct 18, 2023</span>
+</div>
+<div class="z-10">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Revisão FGTS</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Recalculation of FGTS balances using the TR replacement index.</p>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant flex justify-between items-center z-10">
+<button class="bg-primary text-on-primary px-4 py-2 rounded-full font-label-bold text-label-bold flex items-center gap-2 hover:bg-primary-container transition-colors w-full justify-center">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        Download Report
+                    </button>
+</div>
+</div>
+<!-- Case Card 3 (Sent) -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_6px_rgba(0,0,0,0.05)] border border-outline-variant flex flex-col gap-4 hover:shadow-md transition-shadow group cursor-pointer relative overflow-hidden">
+<div class="flex justify-between items-start z-10">
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">send</span>
+                        Sent to Court
+                    </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Sep 05, 2023</span>
+</div>
+<div class="z-10">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Cobrança Indevida Telefonia</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Action against telecom provider for unauthorized services billed continuously.</p>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant flex justify-between items-center z-10">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">gavel</span>
+                        Process # 0012345-67.2023
+                    </span>
+</div>
+</div>
+<!-- Empty State / Create New (Optional if few cases, but good for UX) -->
+<div class="bg-surface-container-low rounded-xl p-6 border border-dashed border-outline-variant flex flex-col items-center justify-center gap-4 text-center cursor-pointer hover:bg-surface-container transition-colors min-h-[250px]">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container mb-2">
+<span class="material-symbols-outlined text-[24px]">add</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Start a New Case</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Upload your documents for a new automated legal audit.</p>
+</div>
+</div>
+<!-- FAB (Floating Action Button) - Visible primarily on mobile, but acceptable on desktop for primary actions -->
+<button class="fixed bottom-24 right-4 md:bottom-8 md:right-8 w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center hover:bg-primary-container hover:scale-105 active:scale-95 transition-all z-40">
+<span class="material-symbols-outlined text-[28px]">add</span>
+</button>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center h-16 pb-safe bg-surface dark:bg-surface-container-lowest border-t border-outline-variant shadow-[0_-2px_10px_rgba(0,0,0,0.05)] z-50">
+<a class="flex flex-col items-center justify-center text-secondary dark:text-on-secondary-fixed-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-primary-container text-primary dark:text-on-primary-container rounded-full px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">folder_shared</span>
+<span class="font-label-sm text-label-sm mt-1">My Cases</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-on-secondary-fixed-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-label-sm text-label-sm mt-1">Guides</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-on-secondary-fixed-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-sm text-label-sm mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

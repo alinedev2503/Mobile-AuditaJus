@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Configurações - Contador Jurídico Pro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-primary": "#002a78", "on-tertiary": "#283044", "on-surface-variant": "#c3c6d7", "inverse-primary": "#0053db", "on-tertiary-fixed": "#131b2e", "surface-container-highest": "#323537", "on-secondary": "#233144", error: "#ffb4ab", "tertiary-fixed-dim": "#bec6e0", "on-primary-container": "#eeefff", "surface-container-high": "#272a2c", "surface-dim": "#101415", "surface-tint": "#b4c5ff", "outline-variant": "#434655", "on-secondary-container": "#abb9d2", secondary: "#b9c7e0", "tertiary-container": "#656d84", "on-tertiary-fixed-variant": "#3f465c", outline: "#8d90a0", "surface-variant": "#323537", "inverse-on-surface": "#2d3133", "primary-fixed-dim": "#b4c5ff", "on-primary-fixed-variant": "#003ea8", tertiary: "#bec6e0", background: "#101415", "surface-container-lowest": "#0b0f10", "on-error": "#690005", primary: "#b4c5ff", "secondary-fixed": "#d5e3fd", "on-error-container": "#ffdad6", "tertiary-fixed": "#dae2fd", surface: "#101415", "inverse-surface": "#e0e3e5", "secondary-fixed-dim": "#b9c7e0", "primary-container": "#2563eb", "surface-bright": "#363a3b", "on-surface": "#e0e3e5", "on-primary-fixed": "#00174b", "error-container": "#93000a", "on-secondary-fixed": "#0d1c2f", "primary-fixed": "#dbe1ff", "surface-container-low": "#191c1e", "secondary-container": "#3c4a5e", "surface-container": "#1d2022", "on-secondary-fixed-variant": "#3a485c", "on-background": "#e0e3e5", "on-tertiary-container": "#eef0ff"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {xl: "40px", gutter: "24px", lg: "24px", "margin-mobile": "16px", md: "16px", sm: "8px", xs: "4px", "container-max": "1280px", unit: "4px"}, fontFamily: {"headline-lg": ["Domine"], "headline-md": ["Domine"], "headline-lg-mobile": ["Domine"], "display-lg": ["Domine"], "body-md": ["Work Sans"], "label-md": ["Work Sans"], "body-sm": ["Work Sans"], "label-sm": ["Work Sans"], "body-lg": ["Work Sans"], "label-bold": ["Work Sans"], headline: ["Inter"], display: ["Inter"], body: ["Inter"], label: ["Inter"]}, fontSize: {"headline-lg": ["32px", {lineHeight: "40px", fontWeight: "600"}], "headline-md": ["24px", {lineHeight: "32px", fontWeight: "600"}], "headline-lg-mobile": ["24px", {lineHeight: "32px", fontWeight: "600"}], "display-lg": ["48px", {lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700"}], "body-md": ["16px", {lineHeight: "24px", fontWeight: "400"}], "label-md": ["14px", {lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600"}], "body-sm": ["14px", {lineHeight: "20px", fontWeight: "400"}], "label-sm": ["12px", {lineHeight: "16px", fontWeight: "500"}], "body-lg": ["18px", {lineHeight: "28px", fontWeight: "400"}], "label-bold": ["14px", {lineHeight: "20px", letterSpacing: "0.01em", fontWeight: "700"}]}}}};</script>
+<style>
+        body { font-family: 'Work Sans', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dim shadow-[0_4px_6px_rgba(0,0,0,0.05)] docked full-width top-0 z-40 hidden md:flex">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed" data-icon="gavel" style="font-variation-settings: 'FILL' 1;">gavel</span>
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Contador Jurídico Pro</span>
+</div>
+<nav class="flex items-center gap-6">
+<a class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-variant/50 dark:hover:bg-surface-variant/20 transition-colors active:scale-95 duration-150 px-3 py-2 rounded-lg flex items-center gap-2" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-bold text-label-bold">Home</span>
+</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-variant/50 dark:hover:bg-surface-variant/20 transition-colors active:scale-95 duration-150 px-3 py-2 rounded-lg flex items-center gap-2" href="#">
+<span class="material-symbols-outlined" data-icon="folder_shared">folder_shared</span>
+<span class="font-label-bold text-label-bold">My Cases</span>
+</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-variant/50 dark:hover:bg-surface-variant/20 transition-colors active:scale-95 duration-150 px-3 py-2 rounded-lg flex items-center gap-2" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+<span class="font-label-bold text-label-bold">Guides</span>
+</a>
+<a class="text-primary dark:text-primary-fixed font-bold hover:bg-surface-variant/50 dark:hover:bg-surface-variant/20 transition-colors active:scale-95 duration-150 px-3 py-2 rounded-lg flex items-center gap-2" href="#">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label-bold text-label-bold">Settings</span>
+</a>
+</nav>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto py-8 mb-20 md:mb-8">
+<!-- Header / Profile Summary -->
+<div class="mb-8">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-6">Configurações</h1>
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_6px_rgba(0,0,0,0.05)] p-6 border border-outline-variant flex items-center gap-4">
+<div class="w-16 h-16 rounded-full overflow-hidden bg-surface-container-high flex-shrink-0">
+<img alt="Profile Picture" class="w-full h-full object-cover" data-alt="A professional headshot of a mature lawyer or legal auditor, wearing a neat navy blue suit against a clean, light blue and white minimalist background. The lighting is soft and high-key, conveying trustworthiness and professional reliability. The style is hyper-realistic corporate photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOh1fDlrjx4hF86ifqlKJDRqHBjxLw1Hm-3Zp2HWSDvhxC1Di_qUgDLQ7jXB5ic9C2pyIeN5P1M4W_hdODauOISSJg6u7TH5tuO_EOkO1_6DysgaRY-x3fF9nw7drkSK7q_OIyRe_P7x8lHcxKHIM9upy5Yw_2rjQi9P1cYcM_DMrrNWOmyXlt2EOMUP6TUCo-cyINI4krGrFyPkLldl9TWEVolQZE-5biCNL4FSgtMNmagRFiHsbO"/>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Dr. Roberto Silva</h2>
+<p class="font-body-md text-body-md text-secondary">roberto.silva@contadorjuridico.com.br</p>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Left Column -->
+<div class="space-y-6">
+<!-- Conta Section -->
+<section class="bg-surface-container-lowest rounded-xl shadow-[0_4px_6px_rgba(0,0,0,0.05)] border border-outline-variant overflow-hidden">
+<div class="bg-surface-container-low px-6 py-4 border-b border-outline-variant">
+<h3 class="font-label-bold text-label-bold text-primary uppercase tracking-wider">Conta</h3>
+</div>
+<div class="divide-y divide-outline-variant">
+<a class="flex items-center justify-between px-6 py-4 hover:bg-surface-container-high/50 transition-colors" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="person">person</span>
+<span class="font-body-md text-body-md">Editar Perfil</span>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</a>
+<a class="flex items-center justify-between px-6 py-4 hover:bg-surface-container-high/50 transition-colors" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="lock">lock</span>
+<span class="font-body-md text-body-md">Alterar Senha</span>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</a>
+</div>
+</section>
+<!-- Notificações Section -->
+<section class="bg-surface-container-lowest rounded-xl shadow-[0_4px_6px_rgba(0,0,0,0.05)] border border-outline-variant overflow-hidden">
+<div class="bg-surface-container-low px-6 py-4 border-b border-outline-variant">
+<h3 class="font-label-bold text-label-bold text-primary uppercase tracking-wider">Notificações</h3>
+</div>
+<div class="divide-y divide-outline-variant">
+<div class="flex items-center justify-between px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="notifications">notifications</span>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md">Push Notifications</span>
+<span class="font-label-sm text-label-sm text-secondary">Avisos no aplicativo</span>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<div class="flex items-center justify-between px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="mail">mail</span>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md">Email</span>
+<span class="font-label-sm text-label-sm text-secondary">Resumos de auditoria</span>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column -->
+<div class="space-y-6">
+<!-- Segurança Section -->
+<section class="bg-surface-container-lowest rounded-xl shadow-[0_4px_6px_rgba(0,0,0,0.05)] border border-outline-variant overflow-hidden">
+<div class="bg-surface-container-low px-6 py-4 border-b border-outline-variant">
+<h3 class="font-label-bold text-label-bold text-primary uppercase tracking-wider">Segurança</h3>
+</div>
+<div class="divide-y divide-outline-variant">
+<div class="flex items-center justify-between px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="fingerprint">fingerprint</span>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md">Login Biométrico</span>
+<span class="font-label-sm text-label-sm text-secondary">Usar Face ID / Touch ID</span>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- Sobre Section -->
+<section class="bg-surface-container-lowest rounded-xl shadow-[0_4px_6px_rgba(0,0,0,0.05)] border border-outline-variant overflow-hidden">
+<div class="bg-surface-container-low px-6 py-4 border-b border-outline-variant">
+<h3 class="font-label-bold text-label-bold text-primary uppercase tracking-wider">Sobre</h3>
+</div>
+<div class="divide-y divide-outline-variant">
+<div class="flex items-center justify-between px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="info">info</span>
+<span class="font-body-md text-body-md">Versão do Aplicativo</span>
+</div>
+<span class="font-body-md text-body-md text-secondary">v2.4.1</span>
+</div>
+<a class="flex items-center justify-between px-6 py-4 hover:bg-surface-container-high/50 transition-colors" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="help">help</span>
+<span class="font-body-md text-body-md">Suporte e Ajuda</span>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</a>
+</div>
+</section>
+<!-- Logout Button -->
+<div class="pt-4">
+<button class="w-full py-3 px-6 bg-error-container text-on-error-container hover:bg-error hover:text-on-error rounded-full font-label-bold text-label-bold transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+                        Sair da Conta
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-surface dark:bg-surface-container-lowest shadow-[0_-2px_10px_rgba(0,0,0,0.05)] fixed bottom-0 w-full z-50 md:hidden flex justify-around items-center h-16 pb-safe">
+<a class="flex flex-col items-center justify-center text-secondary dark:text-on-secondary-fixed-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-on-secondary-fixed-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="folder_shared">folder_shared</span>
+<span class="font-label-sm text-label-sm">My Cases</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-on-secondary-fixed-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+<span class="font-label-sm text-label-sm">Guides</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-primary-container text-primary dark:text-on-primary-container rounded-full px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label-sm text-label-sm">Settings</span>
+</a>
+</nav>
+</body></html>
