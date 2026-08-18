@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,10 +15,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.ui.MainViewModel
 
@@ -32,36 +36,61 @@ fun SettingsScreen(
     val userSettings by viewModel.userSettings.collectAsState()
 
     var showEditProfileDialog by remember { mutableStateOf(false) }
+    var showPasswordDialog by remember { mutableStateOf(false) }
+    var emailNotificationEnabled by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = "Ajustes e Configurações",
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Gavel,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Text(
+                            text = "Contador Jurídico Pro",
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 20.sp
+                        )
+                    }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    scrolledContainerColor = MaterialTheme.colorScheme.surface
+                )
             )
         },
-        modifier = modifier
+        containerColor = MaterialTheme.colorScheme.background,
+        modifier = modifier.fillMaxSize()
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(bottom = 80.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            contentPadding = PaddingValues(top = 8.dp, bottom = 96.dp)
         ) {
-            // Profile Card
+            // Screen Title
+            item {
+                Text(
+                    text = "Configurações",
+                    style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+
+            // Profile Summary Card
             item {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("user_profile_card"),
-                    shape = RoundedCornerShape(24.dp),
+                    shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
                     border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -77,10 +106,10 @@ fun SettingsScreen(
                             modifier = Modifier
                                 .size(64.dp)
                                 .clip(CircleShape)
-                                .border(2.dp, MaterialTheme.colorScheme.primaryContainer, CircleShape)
+                                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                         ) {
                             AsyncImage(
-                                model = userSettings.avatarUrl,
+                                model = if (userSettings.avatarUrl.isNotEmpty()) userSettings.avatarUrl else "https://lh3.googleusercontent.com/aida-public/AB6AXuDOh1fDlrjx4hF86ifqlKJDRqHBjxLw1Hm-3Zp2HWSDvhxC1Di_qUgDLQ7jXB5ic9C2pyIeN5P1M4W_hdODauOISSJg6u7TH5tuO_EOkO1_6DysgaRY-x3fF9nw7drkSK7q_OIyRe_P7x8lHcxKHIM9upy5Yw_2rjQi9P1cYcM_DMrrNWOmyXlt2EOMUP6TUCo-cyINI4krGrFyPkLldl9TWEVolQZE-5biCNL4FSgtMNmagRFiHsbO",
                                 contentDescription = "Perfil",
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop
@@ -89,148 +118,95 @@ fun SettingsScreen(
 
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = userSettings.userName,
+                                text = if (userSettings.userName.isNotEmpty()) userSettings.userName else "Dr. Roberto Silva",
                                 style = MaterialTheme.typography.titleLarge.copy(
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                             )
+                            Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = userSettings.userEmail,
-                                style = MaterialTheme.typography.bodySmall.copy(
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                text = if (userSettings.userEmail.isNotEmpty()) userSettings.userEmail else "roberto.silva@contadorjuridico.com.br",
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    color = MaterialTheme.colorScheme.secondary
                                 )
                             )
                         }
-
-                        IconButton(onClick = { showEditProfileDialog = true }) {
-                            Icon(imageVector = Icons.Default.Edit, contentDescription = "Editar")
-                        }
                     }
                 }
             }
 
-            // Section 1: Conta
+            // Section 1: CONTA
             item {
-                Text(
-                    text = "Minha Conta",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                SettingsSectionCard(title = "CONTA") {
+                    SettingsClickableRow(
+                        icon = Icons.Outlined.Person,
+                        title = "Editar Perfil",
+                        onClick = { showEditProfileDialog = true },
+                        testTag = "edit_profile_row"
                     )
-                )
-            }
-
-            item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-                ) {
-                    Column {
-                        ListItem(
-                            headlineContent = { Text("Alterar Senha") },
-                            leadingContent = { Icon(Icons.Outlined.Lock, contentDescription = null) },
-                            trailingContent = { Icon(Icons.Default.ChevronRight, contentDescription = null) },
-                            modifier = Modifier.testTag("change_password_item")
-                        )
-                        Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        ListItem(
-                            headlineContent = { Text("Dados Pessoais & Documentos") },
-                            leadingContent = { Icon(Icons.Outlined.Badge, contentDescription = null) },
-                            trailingContent = { Icon(Icons.Default.ChevronRight, contentDescription = null) }
-                        )
-                    }
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    SettingsClickableRow(
+                        icon = Icons.Outlined.Lock,
+                        title = "Alterar Senha",
+                        onClick = { showPasswordDialog = true },
+                        testTag = "change_password_row"
+                    )
                 }
             }
 
-            // Section 2: Notificações & Segurança
+            // Section 2: NOTIFICAÇÕES
             item {
-                Text(
-                    text = "Preferências e Segurança",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                SettingsSectionCard(title = "NOTIFICAÇÕES") {
+                    SettingsSwitchRow(
+                        icon = Icons.Outlined.Notifications,
+                        title = "Push Notifications",
+                        subtitle = "Avisos no aplicativo",
+                        checked = userSettings.isPushEnabled,
+                        onCheckedChange = { viewModel.setPushEnabled(it) },
+                        testTag = "push_switch"
                     )
-                )
-            }
-
-            item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-                ) {
-                    Column {
-                        ListItem(
-                            headlineContent = { Text("Notificações Push") },
-                            supportingContent = { Text("Alertas de alteração de status e prazos no JEC") },
-                            leadingContent = { Icon(Icons.Outlined.Notifications, contentDescription = null) },
-                            trailingContent = {
-                                Switch(
-                                    checked = userSettings.isPushEnabled,
-                                    onCheckedChange = { viewModel.setPushEnabled(it) },
-                                    modifier = Modifier.testTag("push_switch")
-                                )
-                            }
-                        )
-                        Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        ListItem(
-                            headlineContent = { Text("Login Biométrico / Fingerprint") },
-                            supportingContent = { Text("Desbloquear app com Digital ou FaceID") },
-                            leadingContent = { Icon(Icons.Outlined.Fingerprint, contentDescription = null) },
-                            trailingContent = {
-                                Switch(
-                                    checked = userSettings.isBiometricEnabled,
-                                    onCheckedChange = { viewModel.setBiometricEnabled(it) },
-                                    modifier = Modifier.testTag("biometric_switch")
-                                )
-                            }
-                        )
-                    }
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    SettingsSwitchRow(
+                        icon = Icons.Outlined.Mail,
+                        title = "Email",
+                        subtitle = "Resumos de auditoria",
+                        checked = emailNotificationEnabled,
+                        onCheckedChange = { emailNotificationEnabled = it },
+                        testTag = "email_switch"
+                    )
                 }
             }
 
-            // Section 3: Documentos Legais e Sobre
+            // Section 3: SEGURANÇA
             item {
-                Text(
-                    text = "Legal e Suporte",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                SettingsSectionCard(title = "SEGURANÇA") {
+                    SettingsSwitchRow(
+                        icon = Icons.Outlined.Fingerprint,
+                        title = "Login Biométrico",
+                        subtitle = "Usar Face ID / Touch ID",
+                        checked = userSettings.isBiometricEnabled,
+                        onCheckedChange = { viewModel.setBiometricEnabled(it) },
+                        testTag = "biometric_switch"
                     )
-                )
+                }
             }
 
+            // Section 4: SOBRE
             item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-                ) {
-                    Column {
-                        ListItem(
-                            headlineContent = { Text("Termos de Uso e Privacidade (LGPD)") },
-                            leadingContent = { Icon(Icons.Outlined.Policy, contentDescription = null) },
-                            trailingContent = { Icon(Icons.Default.ChevronRight, contentDescription = null) },
-                            modifier = Modifier.testTag("terms_item").clickable { onNavigateToTerms() }
-                        )
-                        Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        ListItem(
-                            headlineContent = { Text("Suporte Jurídico e Dúvidas") },
-                            leadingContent = { Icon(Icons.Outlined.HelpOutline, contentDescription = null) },
-                            trailingContent = { Icon(Icons.Default.ChevronRight, contentDescription = null) }
-                        )
-                        Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        ListItem(
-                            headlineContent = { Text("Versão do Aplicativo") },
-                            supportingContent = { Text("AuditaJus v1.0.0") },
-                            leadingContent = { Icon(Icons.Outlined.Info, contentDescription = null) }
-                        )
-                    }
+                SettingsSectionCard(title = "SOBRE") {
+                    SettingsInfoRow(
+                        icon = Icons.Outlined.Info,
+                        title = "Versão do Aplicativo",
+                        value = "v2.4.1"
+                    )
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    SettingsClickableRow(
+                        icon = Icons.Outlined.HelpOutline,
+                        title = "Suporte e Ajuda",
+                        onClick = onNavigateToTerms,
+                        testTag = "support_help_row"
+                    )
                 }
             }
 
@@ -240,22 +216,35 @@ fun SettingsScreen(
                     onClick = onLogout,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(52.dp)
+                        .height(48.dp)
                         .testTag("logout_button"),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.errorContainer),
-                    shape = RoundedCornerShape(16.dp)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                    ),
+                    shape = RoundedCornerShape(24.dp)
                 ) {
-                    Icon(imageVector = Icons.Default.Logout, contentDescription = null, tint = MaterialTheme.colorScheme.onErrorContainer)
+                    Icon(
+                        imageVector = Icons.Default.Logout,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onErrorContainer,
+                        modifier = Modifier.size(20.dp)
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Sair da Conta", color = MaterialTheme.colorScheme.onErrorContainer, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = "Sair da Conta",
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp
+                    )
                 }
             }
         }
 
         if (showEditProfileDialog) {
             EditProfileDialog(
-                currentName = userSettings.userName,
-                currentEmail = userSettings.userEmail,
+                currentName = if (userSettings.userName.isNotEmpty()) userSettings.userName else "Dr. Roberto Silva",
+                currentEmail = if (userSettings.userEmail.isNotEmpty()) userSettings.userEmail else "roberto.silva@contadorjuridico.com.br",
                 onDismiss = { showEditProfileDialog = false },
                 onSave = { newName, newEmail ->
                     viewModel.setLoggedIn(true, newName, newEmail)
@@ -263,7 +252,234 @@ fun SettingsScreen(
                 }
             )
         }
+
+        if (showPasswordDialog) {
+            ChangePasswordDialog(
+                onDismiss = { showPasswordDialog = false }
+            )
+        }
     }
+}
+
+@Composable
+fun SettingsSectionCard(
+    title: String,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+    ) {
+        Column {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                    )
+                    .padding(horizontal = 20.dp, vertical = 12.dp)
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.labelMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    ),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            content()
+        }
+    }
+}
+
+@Composable
+fun SettingsClickableRow(
+    icon: ImageVector,
+    title: String,
+    onClick: () -> Unit,
+    testTag: String = ""
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .testTag(testTag)
+            .padding(horizontal = 20.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.size(22.dp)
+            )
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+        Icon(
+            imageVector = Icons.Default.ChevronRight,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.outline,
+            modifier = Modifier.size(20.dp)
+        )
+    }
+}
+
+@Composable
+fun SettingsSwitchRow(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    testTag: String = ""
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.weight(1f)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.size(22.dp)
+            )
+            Column {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
+        }
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            modifier = Modifier.testTag(testTag),
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = Color.White,
+                checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
+                uncheckedThumbColor = Color.White,
+                uncheckedTrackColor = MaterialTheme.colorScheme.outlineVariant
+            )
+        )
+    }
+}
+
+@Composable
+fun SettingsInfoRow(
+    icon: ImageVector,
+    title: String,
+    value: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.size(22.dp)
+            )
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.secondary
+        )
+    }
+}
+
+@Composable
+fun ChangePasswordDialog(
+    onDismiss: () -> Unit
+) {
+    var oldPassword by remember { mutableStateOf("") }
+    var newPassword by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Alterar Senha", fontWeight = FontWeight.Bold) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(
+                    value = oldPassword,
+                    onValueChange = { oldPassword = it },
+                    label = { Text("Senha Atual") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = newPassword,
+                    onValueChange = { newPassword = it },
+                    label = { Text("Nova Senha") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = confirmPassword,
+                    onValueChange = { confirmPassword = it },
+                    label = { Text("Confirmar Nova Senha") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = onDismiss,
+                enabled = newPassword.isNotEmpty() && newPassword == confirmPassword
+            ) {
+                Text("Atualizar")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancelar")
+            }
+        }
+    )
 }
 
 @Composable
