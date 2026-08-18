@@ -15,12 +15,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.MainViewModel
+import com.example.ui.components.SignaturePad
+import com.example.ui.components.rememberSignatureState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,9 +40,32 @@ fun StructuredPetitionScreen(
     var step1Done by remember { mutableStateOf(true) }
     var step2Done by remember { mutableStateOf(true) }
     var step3Done by remember { mutableStateOf(false) }
+    
+    val signatureState = rememberSignatureState()
+    
     var step4Done by remember { mutableStateOf(false) }
 
     var downloadSuccessMessage by remember { mutableStateOf<String?>(null) }
+
+    val createDocumentLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/pdf")
+    ) { uri ->
+        if (uri != null) {
+            caseEntity?.let { current ->
+                val tempFile = viewModel.exportPetitionPdf(context, current, signatureState.toBitmap())
+                try {
+                    context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                        tempFile.inputStream().use { inputStream ->
+                            inputStream.copyTo(outputStream)
+                        }
+                    }
+                    downloadSuccessMessage = "Petição salva no dispositivo/nuvem com sucesso!"
+                } catch (e: Exception) {
+                    downloadSuccessMessage = "Erro ao salvar a petição: ${e.message}"
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -214,10 +241,29 @@ fun StructuredPetitionScreen(
                             }
                             Spacer(modifier = Modifier.height(10.dp))
 
+                            Text("Assinatura do Requerente", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(100.dp)
+                                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
+                                    .background(Color.White, RoundedCornerShape(8.dp))
+                            ) {
+                                SignaturePad(
+                                    state = signatureState,
+                                    modifier = Modifier.fillMaxSize(),
+                                    strokeWidth = 4f
+                                )
+                            }
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.End
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
+                                TextButton(onClick = { signatureState.clear() }) {
+                                    Text("Limpar Assinatura", fontSize = 12.sp)
+                                }
                                 Text(
                                     text = "Requerente: ${current.authorName}\nAssinatura Digital / Eletrônica",
                                     style = MaterialTheme.typography.labelSmall.copy(
@@ -236,11 +282,11 @@ fun StructuredPetitionScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Button(
+                                                Button(
                             onClick = {
-                                val pdfFile = viewModel.exportPetitionPdf(context, current)
-                                downloadSuccessMessage = "Petição gerada! Salva em: ${pdfFile.name}"
+                                createDocumentLauncher.launch("Peticao_${current.id}_${System.currentTimeMillis()}.pdf")
                             },
+
                             modifier = Modifier
                                 .weight(1f)
                                 .height(50.dp)
@@ -258,7 +304,7 @@ fun StructuredPetitionScreen(
 
                         OutlinedButton(
                             onClick = {
-                                viewModel.sharePetitionPdf(context, current)
+                                viewModel.sharePetitionPdf(context, current, signatureState.toBitmap())
                             },
                             modifier = Modifier
                                 .weight(1f)

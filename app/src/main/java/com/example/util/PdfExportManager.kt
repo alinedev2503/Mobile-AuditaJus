@@ -14,7 +14,7 @@ import java.io.FileOutputStream
 
 object PdfExportManager {
 
-    fun generatePetitionPdf(context: Context, caseEntity: CaseEntity): File {
+    fun generatePetitionPdf(context: Context, caseEntity: CaseEntity, signatureBitmap: android.graphics.Bitmap? = null): File {
         val document = PdfDocument()
         val pageWidth = 595
         val pageHeight = 842
@@ -159,9 +159,17 @@ object PdfExportManager {
         canvas.drawText("Pede deferimento.", marginX, y, paint)
         y += 60f
         
-        val centerX = pageWidth / 2f
+                val centerX = pageWidth / 2f
+        if (signatureBitmap != null) {
+            val sigWidth = 240f
+            val aspectRatio = signatureBitmap.height.toFloat() / signatureBitmap.width.toFloat()
+            val sigHeight = sigWidth * aspectRatio
+            val destRect = android.graphics.RectF(centerX - sigWidth / 2f, y - sigHeight, centerX + sigWidth / 2f, y)
+            canvas.drawBitmap(signatureBitmap, null, destRect, null)
+        }
         canvas.drawLine(centerX - 120f, y, centerX + 120f, y, paint)
         y += 20f
+
         
         val centerPaint = Paint(paint).apply { textAlign = Paint.Align.CENTER }
         canvas.drawText(authorName, centerX, y, centerPaint)

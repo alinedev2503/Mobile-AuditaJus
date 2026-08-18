@@ -155,7 +155,7 @@ fun CalendarDeadlinesScreen(
             AddHearingDeadlineDialog(
                 onDismiss = { showAddDialog = false },
                 onSave = { title, date, time, type, notes ->
-                    viewModel.addHearingDeadline(title, date, time, type, notes)
+                    viewModel.addHearingDeadline(com.example.data.db.HearingDeadlineEntity(caseId = 1L, title = title, dateString = date, timeString = time, type = type, locationOrNotes = notes))
                     showAddDialog = false
                 }
             )

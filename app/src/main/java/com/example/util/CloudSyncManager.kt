@@ -75,9 +75,7 @@ class CloudSyncManager(private val context: Context, private val database: AppDa
                         title = doc.getString("title") ?: "",
                         category = doc.getString("category") ?: "",
                         date = doc.getString("date") ?: "",
-                        label = doc.getString("label") ?: "",
-                        extractedText = doc.getString("extractedText") ?: "",
-                        analyzedAmount = doc.getDouble("analyzedAmount") ?: 0.0,
+                        description = doc.getString("description") ?: "",
                         status = doc.getString("status") ?: "PENDING",
                         subtotalUpdated = doc.getDouble("subtotalUpdated") ?: 0.0,
                         suggestedMoralDamages = doc.getDouble("suggestedMoralDamages") ?: 0.0,
@@ -156,7 +154,7 @@ class CloudSyncManager(private val context: Context, private val database: AppDa
             
             evidenceList.forEach { ev ->
                 // Basic insert without conflict check (for simplicity in dev)
-                database.evidenceDao().insertPhoto(ev)
+                database.evidencePhotoDao().insertPhoto(ev)
             }
         } catch (e: Exception) {
             Log.e("CloudSyncManager", "Error restoring evidence from Firestore", e)

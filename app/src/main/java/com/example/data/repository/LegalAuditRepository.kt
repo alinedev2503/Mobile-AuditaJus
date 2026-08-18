@@ -3,42 +3,54 @@ package com.example.data.repository
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.Base64
+import android.net.Uri
 import com.example.BuildConfig
-import com.example.data.api.*
-import com.example.data.db.*
+import com.example.data.db.AppDatabase
+import com.example.data.db.CaseEntity
+import com.example.data.db.EvidencePhotoEntity
+import com.example.data.db.HearingDeadlineEntity
+import com.example.data.db.PetitionTemplateEntity
+import com.google.firebase.Firebase
+import com.google.firebase.ai.ai
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
-import java.io.File
 
 class LegalAuditRepository(private val db: AppDatabase) {
 
-    val allCases: Flow<List<CaseEntity>> = db.caseDao().getAllCases()
-    val allHearingsDeadlines: Flow<List<HearingDeadlineEntity>> = db.hearingDeadlineDao().getAllHearingsDeadlines()
-    val allTemplates: Flow<List<PetitionTemplateEntity>> = db.petitionTemplateDao().getAllTemplates()
+    val allCases = db.caseDao().getAllCases()
+    val allHearingsDeadlines = db.hearingDeadlineDao().getAllHearingsDeadlines()
+    val allTemplates = db.petitionTemplateDao().getAllTemplates()
 
-    fun getCaseById(id: Long): Flow<CaseEntity?> = db.caseDao().getCaseById(id)
-    fun getPhotosForCase(caseId: Long): Flow<List<EvidencePhotoEntity>> = db.evidencePhotoDao().getPhotosForCase(caseId)
+    fun getCaseById(id: Long) = db.caseDao().getCaseById(id)
 
-    suspend fun insertCase(caseEntity: CaseEntity): Long = withContext(Dispatchers.IO) {
-        db.caseDao().insertCase(caseEntity)
+    suspend fun insertCase(case: CaseEntity) = withContext(Dispatchers.IO) {
+        db.caseDao().insertCase(case)
     }
 
-    suspend fun updateCase(caseEntity: CaseEntity) = withContext(Dispatchers.IO) {
-        db.caseDao().updateCase(caseEntity)
+    suspend fun updateCase(case: CaseEntity) = withContext(Dispatchers.IO) {
+        db.caseDao().updateCase(case)
+    }
+    
+    suspend fun deleteCase(case: CaseEntity) = withContext(Dispatchers.IO) {
+        db.caseDao().deleteCase(case)
     }
 
-    suspend fun deleteCase(caseEntity: CaseEntity) = withContext(Dispatchers.IO) {
-        db.caseDao().deleteCase(caseEntity)
-    }
+    fun getPhotosForCase(caseId: Long) = db.evidencePhotoDao().getPhotosForCase(caseId)
 
-    suspend fun addEvidencePhoto(photo: EvidencePhotoEntity): Long = withContext(Dispatchers.IO) {
+    suspend fun insertPhoto(photo: EvidencePhotoEntity) = withContext(Dispatchers.IO) {
         db.evidencePhotoDao().insertPhoto(photo)
     }
 
-    suspend fun addHearingDeadline(item: HearingDeadlineEntity): Long = withContext(Dispatchers.IO) {
+    suspend fun addEvidencePhoto(photo: EvidencePhotoEntity) = withContext(Dispatchers.IO) {
+        db.evidencePhotoDao().insertPhoto(photo)
+    }
+
+    suspend fun deletePhoto(photo: EvidencePhotoEntity) = withContext(Dispatchers.IO) {
+        db.evidencePhotoDao().deletePhoto(photo)
+    }
+
+    suspend fun addHearingDeadline(item: HearingDeadlineEntity) = withContext(Dispatchers.IO) {
         db.hearingDeadlineDao().insert(item)
     }
 
@@ -50,68 +62,67 @@ class LegalAuditRepository(private val db: AppDatabase) {
         try {
             val caseEntity = db.caseDao().getCaseByIdDirect(caseId) ?: return@withContext Result.failure(Exception("Caso não encontrado"))
             val photos = db.evidencePhotoDao().getPhotosForCaseDirect(caseId)
-            val apiKey = BuildConfig.GEMINI_API_KEY
 
             val prompt = """
-                Role: Você é um Auditor Jurídico Sênior especializado em Direito do Consumidor brasileiro e cálculos judiciais para o Juizado Especial Cível (JEC).
-                Task: Analisar evidências visuais (fotos de faturas, contratos e prints de conversas) para identificar abusos, calcular juros e danos morais, e estruturar os fatos para uma petição inicial.
-                
-                Dados do Caso Atual:
-                Título: ${caseEntity.title}
-                Categoria: ${caseEntity.category}
-                Instruções do Usuário: $userInstructions
-                
-                Reasoning Protocol (Chain-of-Thought):
-                Exploração: Identifique o tipo de documento e extraia dados-chave (valores, datas, CNPJ, número de protocolo).
-                Auditoria: Compare os valores cobrados com as regras básicas fornecidas (ex: teto de juros, multas indevidas).
-                Cálculo: Aplique a correção monetária e estime danos morais com base na gravidade do abuso identificado.
-                Sintetização: Estruture o texto em: Dos Fatos, Do Direito e Dos Pedidos.
-                
+                System Instruction:
+                Role: You are a World-Class Senior Legal Auditor and Data Scientist specialized in Brazilian Consumer Law (JEC).
+
+                Task: Analyze images of utility bills (electricity, water, phone) or consumer contracts to identify potential overcharges, hidden taxes, or billing errors.
+
+                Context: 
+                - Focus on common Brazilian abuses: TUST/TUSD on energy bills, unauthorized "serviços de terceiros" in telecom, or illegal interest rates.
+                - Ground your analysis purely on the provided images.
+                - Caso Atual: ${caseEntity.title}
+                - Instruções do Usuário: $userInstructions
+
                 Constraints:
-                Não alucine: Se um dado não estiver legível na imagem, informe explicitamente "Campo não identificado".
-                Base factual: Utilize apenas as informações presentes nas imagens anexadas para fundamentar a narrativa.
-                
-                Output Format: Formate a resposta EXCLUSIVAMENTE em JSON estruturado com os exatos campos abaixo. Não adicione crases (```json) ou texto antes ou depois do JSON:
+                - DO NOT provide legal advice. Use a disclaimer: "Auditoria contábil baseada nos dados fornecidos. Consulte um advogado para protocolar a ação."
+                - If the image is blurred or data is missing, report "confidence_score": < 0.7.
+                - Strictly output valid JSON.
+
+                Output Format:
                 {
-                  "analise_evidencias": "Sua análise detalhada das evidências em markdown...",
-                  "calculo_financeiro": {
-                    "dano_material": 450.00,
-                    "correcao_inpc": 32.45,
-                    "juros": 27.00,
-                    "dano_moral": 3000.00
+                  "audit_summary": {
+                    "provider_name": "string",
+                    "consumer_name": "string",
+                    "reference_month": "string",
+                    "total_value": 0.0,
+                    "identified_abuse": "string",
+                    "overcharged_amount": 0.0
                   },
-                  "texto_peticao": {
-                    "fatos": "Breve relato claro e estruturado dos fatos...",
-                    "fundamentos": "Resumo dos direitos do consumidor/autor...",
-                    "pedidos": "Lista clara dos pedidos jurídicos..."
-                  }
+                  "calculation_logic": {
+                    "base_value": 0.0,
+                    "applied_interest_rate": "SELIC",
+                    "total_recoverable": 0.0
+                  },
+                  "confidence_score": 1.0
                 }
             """.trimIndent()
 
-            val parts = mutableListOf<GeminiPart>()
-            parts.add(GeminiPart(text = prompt))
-            
-            for (photo in photos) {
-                val inlineData = getBase64Image(context, photo.photoUri)
-                if (inlineData != null) {
-                    parts.add(GeminiPart(inlineData = inlineData))
+            val generativeModel = com.google.firebase.Firebase.ai.generativeModel(
+                modelName = "gemini-3.5-flash",
+                generationConfig = com.google.firebase.ai.type.generationConfig {
+                    responseMimeType = "application/json"
+                    temperature = 0.2f
+                }
+            )
+
+            val promptContent = com.google.firebase.ai.type.content {
+                text(prompt)
+                for (photo in photos) {
+                    val bitmap = getBitmap(context, photo.photoUri)
+                    if (bitmap != null) {
+                        image(bitmap)
+                    }
                 }
             }
 
-            val responseText = if (apiKey.isNotEmpty() && apiKey != "MY_GEMINI_API_KEY") {
-                try {
-                    val request = GeminiRequest(
-                        contents = listOf(
-                            GeminiContent(parts = parts)
-                        )
-                    )
-                    val resp = GeminiRetrofitClient.service.generateContent(apiKey, request)
-                    resp.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text ?: ""
-                } catch (e: Exception) {
-                    "" // Fallback to manual parser below if it fails completely
-                }
-            } else {
-                "" // Simulate if no API key
+            val responseText = try {
+                val response = generativeModel.generateContent(promptContent)
+                response.text ?: ""
+            } catch (e: Exception) {
+                e.printStackTrace()
+                ""
             }
 
             if (responseText.isNotBlank()) {
@@ -119,86 +130,73 @@ class LegalAuditRepository(private val db: AppDatabase) {
                 val cleanJson = responseText.replace(Regex("```json|```"), "").trim()
                 try {
                     val jsonObject = org.json.JSONObject(cleanJson)
-                    val calcObj = jsonObject.optJSONObject("calculo_financeiro") ?: org.json.JSONObject()
-                    val peticaoObj = jsonObject.optJSONObject("texto_peticao") ?: org.json.JSONObject()
+                    val auditSummaryObj = jsonObject.optJSONObject("audit_summary") ?: org.json.JSONObject()
+                    val calcLogicObj = jsonObject.optJSONObject("calculation_logic") ?: org.json.JSONObject()
+                    val confidenceScore = jsonObject.optDouble("confidence_score", 1.0)
                     
-                    val mat = calcObj.optDouble("dano_material", caseEntity.historicalValue)
-                    val inpc = calcObj.optDouble("correcao_inpc", caseEntity.inpcCorrection)
-                    val juros = calcObj.optDouble("juros", caseEntity.defaultInterest)
-                    val moral = calcObj.optDouble("dano_moral", caseEntity.suggestedMoralDamages)
+                    val providerName = auditSummaryObj.optString("provider_name", "Fornecedor Desconhecido")
+                    val consumerName = auditSummaryObj.optString("consumer_name", "Consumidor")
+                    val refMonth = auditSummaryObj.optString("reference_month", "")
+                    val totalValue = auditSummaryObj.optDouble("total_value", 0.0)
+                    val identifiedAbuse = auditSummaryObj.optString("identified_abuse", "Nenhum abuso identificado de forma conclusiva.")
+                    val overchargedAmount = auditSummaryObj.optDouble("overcharged_amount", 0.0)
                     
-                    val fatosText = peticaoObj.optString("fatos", caseEntity.fatosText)
-                    val fundamentosText = peticaoObj.optString("fundamentos", caseEntity.fundamentosText)
-                    val pedidosText = peticaoObj.optString("pedidos", caseEntity.pedidosText)
-                    
+                    val baseValue = calcLogicObj.optDouble("base_value", overchargedAmount)
+                    val appliedInterestRate = calcLogicObj.optString("applied_interest_rate", "SELIC")
+                    val totalRecoverable = calcLogicObj.optDouble("total_recoverable", baseValue)
+
+                    val statusMsg = if (confidenceScore < 0.7) {
+                        "Atenção: A imagem estava borrada ou faltam dados (Confiança: ${confidenceScore}). Verifique os anexos."
+                    } else {
+                        "Auditoria contábil baseada nos dados fornecidos. Consulte um advogado para protocolar a ação."
+                    }
+
+                    val fatosText = "O consumidor $consumerName foi cobrado indevidamente pela empresa $providerName na fatura de $refMonth no valor total de R$ $totalValue.\n\nA auditoria identificou o seguinte abuso: $identifiedAbuse"
+                    val fundamentosText = statusMsg + "\n\nTaxa Aplicada na lógica de cálculo: $appliedInterestRate"
+                    val pedidosText = "1. Reconhecimento da abusividade: $identifiedAbuse\n2. Restituição do valor histórico de R$ $baseValue atualizado para R$ $totalRecoverable."
+
                     val updatedCase = caseEntity.copy(
-                        historicalValue = if (mat.isNaN()) 0.0 else mat,
-                        inpcCorrection = if (inpc.isNaN()) 0.0 else inpc,
-                        defaultInterest = if (juros.isNaN()) 0.0 else juros,
-                        suggestedMoralDamages = if (moral.isNaN()) 0.0 else moral,
-                        subtotalUpdated = (if (mat.isNaN()) 0.0 else mat) + (if (inpc.isNaN()) 0.0 else inpc) + (if (juros.isNaN()) 0.0 else juros),
+                        historicalValue = if (baseValue.isNaN()) 0.0 else baseValue,
+                        inpcCorrection = 0.0,
+                        defaultInterest = 0.0,
+                        suggestedMoralDamages = 0.0,
+                        subtotalUpdated = if (totalRecoverable.isNaN()) 0.0 else totalRecoverable,
                         fatosText = fatosText,
                         fundamentosText = fundamentosText,
                         pedidosText = pedidosText,
-                        legalBasis = jsonObject.optString("analise_evidencias", caseEntity.legalBasis),
+                        legalBasis = "Auditoria (Confiança: $confidenceScore)",
                         status = "PDF_READY"
                     )
+
                     db.caseDao().updateCase(updatedCase)
                     return@withContext Result.success(updatedCase)
+
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    // Fallback to old behavior if JSON parsing fails
-                    return@withContext Result.success(generateFallbackAnalysis(caseEntity))
+                    return@withContext Result.failure(Exception("Erro ao processar JSON da IA Gemini: ${e.message}"))
                 }
             } else {
-                val updatedCase = generateFallbackAnalysis(caseEntity)
-                return@withContext Result.success(updatedCase)
+                return@withContext Result.failure(Exception("Resposta vazia da IA Gemini."))
             }
+
         } catch (e: Exception) {
             e.printStackTrace()
-            return@withContext Result.failure(e)
+            return@withContext Result.failure(Exception("Erro na análise do caso: ${e.message}"))
         }
     }
 
-    private fun generateFallbackAnalysis(caseEntity: CaseEntity): CaseEntity {
-        return caseEntity.copy(
-            historicalValue = 450.0,
-            inpcCorrection = 32.45,
-            defaultInterest = 27.0,
-            suggestedMoralDamages = 3000.0,
-            subtotalUpdated = 450.0 + 32.45 + 27.0,
-            legalBasis = "Art. 42, CDC | Súmula 297, STJ",
-            fatosText = "O Requerente constatou cobrança indevida de taxas e multas fictícias, gerando prejuízo.",
-            fundamentosText = "O artigo 42 do CDC assegura devolução em dobro. Dano moral presumido por falha na prestação.",
-            pedidosText = "a) Citação da requerida; b) Restituição em dobro; c) Danos morais de R$ 3.000,00.",
-            status = "PDF_READY"
-        )
-    }
-
-    private fun getBase64Image(context: Context, uriString: String): InlineData? {
+    private fun getBitmap(context: Context, uriString: String): Bitmap? {
+        if (uriString.isBlank()) return null
         return try {
-            val uri = android.net.Uri.parse(uriString)
+            val uri = Uri.parse(uriString)
             val inputStream = context.contentResolver.openInputStream(uri)
-            val bitmap = BitmapFactory.decodeStream(inputStream)
-            inputStream?.close()
-            if (bitmap != null) {
-                val outputStream = ByteArrayOutputStream()
-                // Resize to prevent payload too large
-                val maxDim = 800f
-                val scale = Math.min(maxDim / bitmap.width, maxDim / bitmap.height)
-                val resized = if (scale < 1) Bitmap.createScaledBitmap(bitmap, (bitmap.width * scale).toInt(), (bitmap.height * scale).toInt(), true) else bitmap
-                
-                resized.compress(Bitmap.CompressFormat.JPEG, 75, outputStream)
-                val base64 = Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
-                InlineData(mimeType = "image/jpeg", data = base64)
-            } else {
-                null
-            }
+            BitmapFactory.decodeStream(inputStream)
         } catch (e: Exception) {
             e.printStackTrace()
             null
         }
     }
+
     suspend fun seedInitialDataIfEmpty() = withContext(Dispatchers.IO) {
         val existingCases = db.caseDao().getCaseByIdDirect(1)
         if (existingCases == null) {
@@ -239,7 +237,6 @@ class LegalAuditRepository(private val db: AppDatabase) {
                 fundamentosText = "Inconstitucionalidade do uso da TR como índice de atualização de depósitos trabalhistas, conforme tese fixada no STF.",
                 pedidosText = "1. Atualização do saldo do FGTS pelo INPC;\n2. Depósito da diferença apurada na conta vinculada."
             )
-
             val case3 = CaseEntity(
                 id = 3,
                 title = "Cobrança Indevida Telefonia",
@@ -258,7 +255,6 @@ class LegalAuditRepository(private val db: AppDatabase) {
                 fundamentosText = "Prática abusiva vedada pelo artigo 39 do CDC e vício na prestação dos serviços.",
                 pedidosText = "1. Cancelamento do pacote ilegítimo;\n2. Devolução em dobro;\n3. Danos morais."
             )
-
             db.caseDao().insertCase(case1)
             db.caseDao().insertCase(case2)
             db.caseDao().insertCase(case3)

@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -11,17 +12,21 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.ui.MainViewModel
-import kotlinx.coroutines.launch
-import androidx.compose.ui.platform.LocalContext
 import com.example.util.GoogleSignInManager
+import kotlinx.coroutines.launch
 
 @Composable
 fun AuthScreen(
@@ -29,213 +34,365 @@ fun AuthScreen(
     onAuthSuccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var isSignUp by remember { mutableStateOf(false) }
-    var email by remember { mutableStateOf("dr.roberto@contadorjuridico.com.br") }
-    val coroutineScope = rememberCoroutineScope()
-    val context = LocalContext.current
-    var password by remember { mutableStateOf("12345678") }
-    var name by remember { mutableStateOf("Dr. Roberto Silva") }
-    var isPasswordVisible by remember { mutableStateOf(false) }
-
-    Box(
+    BoxWithConstraints(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(24.dp),
-        contentAlignment = Alignment.Center
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .widthIn(max = 480.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // App Logo Icon
-            Surface(
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.primaryContainer,
-                modifier = Modifier.size(72.dp)
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Default.Gavel,
+        if (maxWidth > 800.dp) {
+            Row(modifier = Modifier.fillMaxSize()) {
+                // Left Pane
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .background(Color(0xFF0F172A))
+                ) {
+                    AsyncImage(
+                        model = "https://lh3.googleusercontent.com/aida-public/AB6AXuDdRi1zgITil5SnoPu9mFiiQsfJlv0yQG_J9mH1cuJqnpIBnGHZnvkKIywPCf0XCG3SK7FjN6Emo2ncbzrbtshXWPFg-fJzVkMiEVciIRPL5Zh3Oo1hqQqdbM7KLy19A8znzRUuAclfg-DVj6sxQri4lvallk-2BOWZIj8KR_yC5oM6kOY_1SuAOq2inKWu3-tpNlbjcFWW6MZGBMSNayYYpYyQdgz0y6dEMkL82f_En84SbhMVkFT-",
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.size(40.dp)
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                        alpha = 0.4f
                     )
+                    
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(64.dp),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Icon(imageVector = Icons.Default.Gavel, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(48.dp))
+                            Text("Contador Jurídico Pro", style = MaterialTheme.typography.headlineLarge.copy(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.primary)
+                        }
+                        Spacer(modifier = Modifier.height(48.dp))
+                        Text(
+                            text = "Streamline Your Legal Audits",
+                            style = MaterialTheme.typography.displayMedium.copy(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold),
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Professional tools designed to bring clarity, structure, and control to your legal processes. Secure access to your tailored auditing environment.",
+                            style = MaterialTheme.typography.titleLarge.copy(lineHeight = 32.sp),
+                            color = Color.White.copy(alpha = 0.8f)
+                        )
+                    }
+                }
+                
+                // Right Pane
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .background(MaterialTheme.colorScheme.surface),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AuthForm(viewModel, onAuthSuccess, isMobile = false)
                 }
             }
-
-            Text(
-                text = "AuditaJus",
-                style = MaterialTheme.typography.headlineSmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            )
-
-            Text(
-                text = if (isSignUp) "Crie sua conta no assistente do JEC" else "Acesse seus casos e petições",
-                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
-            )
-
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
-                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        } else {
+            // Mobile Single Pane
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
+                contentAlignment = Alignment.Center
             ) {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
-                ) {
-                    if (isSignUp) {
+                AuthForm(viewModel, onAuthSuccess, isMobile = true)
+            }
+        }
+    }
+}
+
+@Composable
+fun AuthForm(
+    viewModel: MainViewModel,
+    onAuthSuccess: () -> Unit,
+    isMobile: Boolean
+) {
+    var isSignUp by remember { mutableStateOf(false) }
+    var email by remember { mutableStateOf("dr.roberto@contadorjuridico.com.br") }
+    var password by remember { mutableStateOf("12345678") }
+    var name by remember { mutableStateOf("Dr. Roberto Silva") }
+    var isPasswordVisible by remember { mutableStateOf(false) }
+    var rememberMe by remember { mutableStateOf(false) }
+    
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .widthIn(max = 480.dp)
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (isMobile) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.padding(bottom = 32.dp)
+                    ) {
+                        Icon(imageVector = Icons.Default.Gavel, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(36.dp))
+                        Text("Contador Jurídico Pro", style = MaterialTheme.typography.titleLarge.copy(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.primary)
+                    }
+                }
+                
+                Text(
+                    text = if (isSignUp) "Create Account" else "Welcome Back",
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontFamily = FontFamily.Serif,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = if (isSignUp) "Please fill in the details to join us." else "Please enter your details to sign in.",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                
+                Spacer(modifier = Modifier.height(32.dp))
+                
+                if (isSignUp) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text("Name", style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
+                        Spacer(modifier = Modifier.height(8.dp))
                         OutlinedTextField(
                             value = name,
                             onValueChange = { name = it },
-                            label = { Text("Nome Completo / OAB") },
-                            leadingIcon = { Icon(Icons.Outlined.Person, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                            placeholder = { Text("John Doe") },
+                            leadingIcon = { Icon(Icons.Outlined.Person, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                             singleLine = true,
                             shape = RoundedCornerShape(16.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .testTag("auth_name_input")
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                focusedBorderColor = MaterialTheme.colorScheme.primary
+                            )
                         )
                     }
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
 
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Text("Email", style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
+                    Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
-                        label = { Text("E-mail Profissional") },
-                        leadingIcon = { Icon(Icons.Outlined.Email, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                        placeholder = { Text("name@example.com") },
+                        leadingIcon = { Icon(Icons.Outlined.Email, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                         singleLine = true,
                         shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .testTag("auth_email_input")
+                        modifier = Modifier.fillMaxWidth().testTag("auth_email_input"),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary
+                        )
                     )
-
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Text("Password", style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
+                    Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
-                        label = { Text("Senha") },
-                        leadingIcon = { Icon(Icons.Outlined.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                        placeholder = { Text("••••••••") },
+                        leadingIcon = { Icon(Icons.Outlined.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                         trailingIcon = {
                             IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                                 Icon(
                                     imageVector = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                    contentDescription = null
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         },
                         visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         singleLine = true,
                         shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .testTag("auth_password_input")
-                    )
-
-                    Button(
-                        onClick = {
-                            viewModel.setLoggedIn(true, name, email)
-                            onAuthSuccess()
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(52.dp)
-                            .testTag("auth_submit_button"),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(16.dp)
-                    ) {
-                        Text(
-                            text = if (isSignUp) "Criar Conta" else "Entrar no Sistema",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
+                        modifier = Modifier.fillMaxWidth().testTag("auth_password_input"),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary
                         )
-                    }
-
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                if (!isSignUp) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Divider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        Text(
-                            text = " ou acesse via ",
-                            style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray)
-                        )
-                        Divider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Checkbox(
+                                checked = rememberMe,
+                                onCheckedChange = { rememberMe = it },
+                                colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
+                            )
+                            Text("Remember me", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                        TextButton(onClick = { }) {
+                            Text("Forgot password?", style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.primary)
+                        }
                     }
-
-                    // Social Auth Buttons
-                                        OutlinedButton(
+                    Spacer(modifier = Modifier.height(24.dp))
+                } else {
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
+                
+                Button(
+                    onClick = {
+                        viewModel.setLoggedIn(true, name, email)
+                        onAuthSuccess()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .testTag("auth_submit_button"),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    shape = CircleShape
+                ) {
+                    Text(
+                        text = if (isSignUp) "Sign Up" else "Sign In",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(32.dp))
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    Text(
+                        text = "Or continue with",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                }
+                
+                Spacer(modifier = Modifier.height(24.dp))
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    OutlinedButton(
                         onClick = {
                             coroutineScope.launch {
                                 val manager = GoogleSignInManager(context)
-                                val (success, name) = manager.signInWithGoogle()
+                                val (success, loggedName) = manager.signInWithGoogle()
                                 if (success) {
-                                    viewModel.setLoggedIn(true, name, email)
+                                    viewModel.setLoggedIn(true, loggedName, email)
                                     onAuthSuccess()
                                 } else {
-                                    // Normally you'd show a Snackbar with error message here
-                                    // We will still proceed in development mode to unblock UI if missing google-services
                                     viewModel.setLoggedIn(true, "Dr. Roberto Silva (Dev Auth)", email)
                                     onAuthSuccess()
                                 }
                             }
                         },
-
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .weight(1f)
                             .height(48.dp)
                             .testTag("google_login_button"),
-                        shape = RoundedCornerShape(16.dp)
+                        shape = CircleShape,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.AccountCircle,
-                            contentDescription = null,
-                            tint = Color(0xFF4285F4)
-                        )
+                        Text("G", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = Color(0xFF4285F4))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Continuar com Google", fontWeight = FontWeight.Bold)
+                        Text("Google", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                     }
-
+                    
                     OutlinedButton(
                         onClick = {
                             viewModel.setLoggedIn(true, "Dr. Roberto Silva (Apple)", email)
                             onAuthSuccess()
                         },
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .weight(1f)
                             .height(48.dp)
                             .testTag("apple_login_button"),
-                        shape = RoundedCornerShape(16.dp)
+                        shape = CircleShape,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                     ) {
                         Icon(
                             imageVector = Icons.Default.PhoneIphone,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Continuar com Apple", fontWeight = FontWeight.Bold)
+                        Text("Apple", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(32.dp))
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = if (isSignUp) "Already have an account?" else "Don't have an account?",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    TextButton(onClick = { isSignUp = !isSignUp }) {
+                        Text(
+                            text = if (isSignUp) "Sign In" else "Create Account",
+                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
                 }
             }
-
-            TextButton(
-                onClick = { isSignUp = !isSignUp },
-                modifier = Modifier.testTag("toggle_auth_mode_button")
-            ) {
-                Text(
-                    text = if (isSignUp) "Já possui uma conta? Faça Login" else "Não tem conta? Cadastre-se grátis",
-                    fontWeight = FontWeight.Bold
-                )
-            }
+        }
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp), 
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Terms of Service", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text("•", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text("Privacy Policy", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

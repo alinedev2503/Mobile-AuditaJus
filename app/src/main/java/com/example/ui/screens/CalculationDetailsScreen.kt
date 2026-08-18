@@ -346,7 +346,7 @@ fun CalculationDetailsScreen(
                 current = caseEntity!!,
                 onDismiss = { showAdjustDialog = false },
                 onSave = { mat, inpc, juros, moral ->
-                    viewModel.updateManualValues(caseId, mat, inpc, juros, moral)
+                    viewModel.updateManualValues(caseEntity!!, mat, inpc, juros, moral)
                     showAdjustDialog = false
                 }
             )

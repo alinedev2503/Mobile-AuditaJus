@@ -6,7 +6,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.db.AppDatabase
 import com.example.util.CloudSyncManager
-import kotlinx.coroutines.launch
 import com.example.data.db.CaseEntity
 import com.example.data.db.EvidencePhotoEntity
 import com.example.data.db.HearingDeadlineEntity
@@ -19,7 +18,6 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
-
     private val db = AppDatabase.getInstance(application)
     private val repository = LegalAuditRepository(db)
     private val userPreferences = UserPreferencesRepository(application)
@@ -76,6 +74,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun syncDataWithCloud() {
+        viewModelScope.launch {
+            if (cloudSyncManager.isUserLoggedIn()) {
+                cloudSyncManager.restoreCasesFromCloud()
+                cases.value.forEach { 
+                    cloudSyncManager.restoreEvidenceFromCloud(it.id) 
+                }
+            }
+        }
+    }
+
     fun selectCase(caseId: Long) {
         _selectedCaseId.value = caseId
     }
@@ -92,30 +101,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _guideFilter.value = filter
     }
 
-    fun createNewCase(
-        title: String,
-        category: String,
-        description: String,
-        authorName: String = "Dr. Roberto Silva",
-        defendantName: String = ""
-    ) {
+    fun createNewCase(title: String, category: String, date: String = "") {
         viewModelScope.launch {
-            val newCase = CaseEntity(
-                title = title,
-                category = category,
-                description = description,
-                status = "UPLOAD",
-                date = "Hoje",
-                authorName = authorName,
-                defendantName = defendantName
-            )
-            val newId = repository.insertCase(newCase)
-            cloudSyncManager.syncCaseToCloud(newCase)
+            val newId = repository.insertCase(CaseEntity(title = title, category = category, date = date, description = "", status = "PENDING"))
             _selectedCaseId.value = newId
         }
     }
 
-            fun addEvidencePhoto(caseId: Long, label: String, photoUri: String = "") {
+    fun addEvidencePhoto(caseId: Long, label: String, photoUri: String = "") {
         viewModelScope.launch {
             val ev = EvidencePhotoEntity(
                 caseId = caseId,
@@ -128,9 +121,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-
-    }
-
     fun triggerGeminiAnalysis(caseId: Long, userNotes: String = "") {
         viewModelScope.launch {
             _isAnalyzing.value = true
@@ -141,7 +131,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             if (existing != null) {
                 repository.updateCase(existing.copy(status = "ANALYSING"))
             }
-
             val result = repository.analyzeCaseWithGemini(getApplication(), caseId, userNotes)
             _isAnalyzing.value = false
             if (result.isSuccess) {
@@ -152,18 +141,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun addHearingDeadline(title: String, date: String, time: String, type: String, notes: String, caseId: Long? = null) {
+    fun clearAnalysisMessage() {
+        _analysisMessage.value = null
+    }
+
+    fun addHearingDeadline(item: HearingDeadlineEntity) {
         viewModelScope.launch {
-            repository.addHearingDeadline(
-                HearingDeadlineEntity(
-                    caseId = caseId,
-                    title = title,
-                    dateString = date,
-                    timeString = time,
-                    locationOrNotes = notes,
-                    type = type
-                )
-            )
+            repository.addHearingDeadline(item)
         }
     }
 
@@ -173,9 +157,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun updateManualValues(caseId: Long, matDamage: Double, inpc: Double, juros: Double, moral: Double) {
+    fun updateManualValues(caseEntity: CaseEntity, matDamage: Double, inpc: Double, juros: Double, moral: Double) {
         viewModelScope.launch {
-            val caseEntity = repository.allCases.firstOrNull()?.find { it.id == caseId } ?: return@launch
             val updated = caseEntity.copy(
                 historicalValue = matDamage,
                 inpcCorrection = inpc,
@@ -187,13 +170,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun exportPetitionPdf(context: Context, caseEntity: CaseEntity): File {
-        val file = PdfExportManager.generatePetitionPdf(context, caseEntity)
+    fun exportPetitionPdf(context: Context, caseEntity: CaseEntity, signatureBitmap: android.graphics.Bitmap? = null): File {
+        val file = PdfExportManager.generatePetitionPdf(context, caseEntity, signatureBitmap)
         return file
     }
 
-    fun sharePetitionPdf(context: Context, caseEntity: CaseEntity) {
-        val file = PdfExportManager.generatePetitionPdf(context, caseEntity)
+    fun sharePetitionPdf(context: Context, caseEntity: CaseEntity, signatureBitmap: android.graphics.Bitmap? = null) {
+        val file = PdfExportManager.generatePetitionPdf(context, caseEntity, signatureBitmap)
         PdfExportManager.sharePdfFile(context, file)
     }
 
