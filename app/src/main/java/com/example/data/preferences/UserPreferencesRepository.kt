@@ -19,7 +19,15 @@ data class UserSettings(
     val isEmailEnabled: Boolean = false,
     val hasAcceptedTerms: Boolean = true,
     val hasCompletedOnboarding: Boolean = true,
-    val isDarkMode: Boolean? = null
+    val isDarkMode: Boolean? = null,
+    // Lawyer & Firm Customization
+    val oabNumber: String = "123.456",
+    val oabUf: String = "SP",
+    val lawFirmName: String = "Silva & Associados Advocacia",
+    val officeAddress: String = "Av. Paulista, 1000, Cj. 1402 - São Paulo/SP",
+    val officePhone: String = "(11) 98765-4321",
+    val logoUri: String = "",
+    val useCustomLetterhead: Boolean = true
 )
 
 class UserPreferencesRepository(private val context: Context) {
@@ -35,6 +43,13 @@ class UserPreferencesRepository(private val context: Context) {
         val ACCEPTED_TERMS = booleanPreferencesKey("accepted_terms")
         val COMPLETED_ONBOARDING = booleanPreferencesKey("completed_onboarding")
         val DARK_MODE = booleanPreferencesKey("dark_mode")
+        val OAB_NUMBER = stringPreferencesKey("oab_number")
+        val OAB_UF = stringPreferencesKey("oab_uf")
+        val LAW_FIRM_NAME = stringPreferencesKey("law_firm_name")
+        val OFFICE_ADDRESS = stringPreferencesKey("office_address")
+        val OFFICE_PHONE = stringPreferencesKey("office_phone")
+        val LOGO_URI = stringPreferencesKey("logo_uri")
+        val USE_CUSTOM_LETTERHEAD = booleanPreferencesKey("use_custom_letterhead")
     }
 
     val userSettingsFlow: Flow<UserSettings> = context.dataStore.data.map { prefs ->
@@ -48,8 +63,35 @@ class UserPreferencesRepository(private val context: Context) {
             isEmailEnabled = prefs[Keys.EMAIL_ENABLED] ?: false,
             hasAcceptedTerms = prefs[Keys.ACCEPTED_TERMS] ?: true,
             hasCompletedOnboarding = prefs[Keys.COMPLETED_ONBOARDING] ?: true,
-            isDarkMode = prefs[Keys.DARK_MODE]
+            isDarkMode = prefs[Keys.DARK_MODE],
+            oabNumber = prefs[Keys.OAB_NUMBER] ?: "123.456",
+            oabUf = prefs[Keys.OAB_UF] ?: "SP",
+            lawFirmName = prefs[Keys.LAW_FIRM_NAME] ?: "Silva & Associados Advocacia",
+            officeAddress = prefs[Keys.OFFICE_ADDRESS] ?: "Av. Paulista, 1000, Cj. 1402 - São Paulo/SP",
+            officePhone = prefs[Keys.OFFICE_PHONE] ?: "(11) 98765-4321",
+            logoUri = prefs[Keys.LOGO_URI] ?: "",
+            useCustomLetterhead = prefs[Keys.USE_CUSTOM_LETTERHEAD] ?: true
         )
+    }
+
+    suspend fun updateLawyerProfile(
+        oabNumber: String,
+        oabUf: String,
+        lawFirmName: String,
+        officeAddress: String,
+        officePhone: String,
+        logoUri: String,
+        useCustomLetterhead: Boolean
+    ) {
+        context.dataStore.edit { prefs ->
+            prefs[Keys.OAB_NUMBER] = oabNumber
+            prefs[Keys.OAB_UF] = oabUf
+            prefs[Keys.LAW_FIRM_NAME] = lawFirmName
+            prefs[Keys.OFFICE_ADDRESS] = officeAddress
+            prefs[Keys.OFFICE_PHONE] = officePhone
+            prefs[Keys.LOGO_URI] = logoUri
+            prefs[Keys.USE_CUSTOM_LETTERHEAD] = useCustomLetterhead
+        }
     }
 
     suspend fun setDarkMode(isDark: Boolean?) {

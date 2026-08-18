@@ -39,6 +39,7 @@ fun ContadorJuridicoProApp() {
     val viewModel: MainViewModel = viewModel()
 
     val userSettings by viewModel.userSettings.collectAsState()
+    val favoriteGuides by viewModel.favoriteGuides.collectAsState()
     val isSystemDark = androidx.compose.foundation.isSystemInDarkTheme()
     val darkTheme = userSettings.isDarkMode ?: isSystemDark
 
@@ -77,6 +78,7 @@ fun ContadorJuridicoProApp() {
             if (showBottomBar) {
                 AppBottomNavBar(
                     currentDestination = currentNavDestination,
+                    favoriteGuidesCount = favoriteGuides.size,
                     onNavigate = { destination ->
                         navController.navigate(destination.name) {
                             popUpTo(navController.graph.findStartDestination().id) {
@@ -136,6 +138,9 @@ fun ContadorJuridicoProApp() {
                     onOpenAiAssistant = { showAiAssistantDialog = true },
                     onNavigateToAllCases = {
                         navController.navigate(AppNavDestination.CASES.name)
+                    },
+                    onNavigateToPlans = {
+                        navController.navigate("subscription_plans")
                     }
                 )
             }
@@ -171,12 +176,32 @@ fun ContadorJuridicoProApp() {
                     onNavigateToTerms = {
                         navController.navigate("legal_documents")
                     },
+                    onNavigateToPlans = {
+                        navController.navigate("subscription_plans")
+                    },
+                    onNavigateToLawyerCustomization = {
+                        navController.navigate("lawyer_customization")
+                    },
                     onLogout = {
                         viewModel.setLoggedIn(false)
                         navController.navigate("auth") {
                             popUpTo(0)
                         }
                     }
+                )
+            }
+
+            composable("lawyer_customization") {
+                LawyerCustomizationScreen(
+                    viewModel = viewModel,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            composable("subscription_plans") {
+                SubscriptionPlansScreen(
+                    viewModel = viewModel,
+                    onNavigateBack = { navController.popBackStack() }
                 )
             }
 
@@ -204,7 +229,10 @@ fun ContadorJuridicoProApp() {
                 StructuredPetitionScreen(
                     viewModel = viewModel,
                     caseId = caseId,
-                    onNavigateBack = { navController.popBackStack() }
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToLawyerCustomization = {
+                        navController.navigate("lawyer_customization")
+                    }
                 )
             }
 

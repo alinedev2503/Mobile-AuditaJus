@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -36,6 +37,12 @@ import com.example.data.db.CaseEntity
 import com.example.data.db.EvidencePhotoEntity
 import com.example.ui.MainViewModel
 import com.example.ui.components.CameraCaptureView
+import com.example.ui.components.CaptureTipsCarousel
+import com.example.ui.components.InteractiveCoachMarksTour
+import com.example.ui.components.LegalAuditGuidedTourDialog
+import com.example.ui.components.OfflineStatusBanner
+import com.example.ui.components.RecentAuditSummaryCard
+import com.example.util.rememberIsOnline
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,14 +53,18 @@ fun HomeScreen(
     onNavigateToGuides: () -> Unit,
     onOpenAiAssistant: () -> Unit,
     onNavigateToAllCases: () -> Unit,
+    onNavigateToPlans: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val isOnline by rememberIsOnline()
     val cases by viewModel.cases.collectAsState()
     val activeCase by viewModel.currentCase.collectAsState()
     val casePhotos by viewModel.currentCasePhotos.collectAsState()
     val isAnalyzing by viewModel.isAnalyzing.collectAsState()
     val userSettings by viewModel.userSettings.collectAsState()
     val context = LocalContext.current
+
+    var showInteractiveTour by remember { mutableStateOf(false) }
 
     var showTutorial by remember { mutableStateOf(false) }
     if (showTutorial) {
@@ -103,6 +114,46 @@ fun HomeScreen(
                     }
                 },
                 actions = {
+                    Surface(
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier
+                            .clickable { onNavigateToPlans() }
+                            .testTag("home_pro_plans_badge")
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.WorkspacePremium,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Text(
+                                text = "PRO",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 11.sp
+                                ),
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
+                    }
+
+                    IconButton(
+                        onClick = { showInteractiveTour = true },
+                        modifier = Modifier.testTag("interactive_tour_button")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Explore,
+                            contentDescription = "Tour Interativo de Auditoria",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
                     IconButton(
                         onClick = onOpenAiAssistant,
                         modifier = Modifier.testTag("ai_assistant_button")
@@ -118,7 +169,7 @@ fun HomeScreen(
                     Box(
                         modifier = Modifier
                             .padding(end = 12.dp)
-                            .size(44.dp)
+                            .size(40.dp)
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.primaryContainer)
                             .border(2.dp, Color.White, CircleShape),
@@ -157,6 +208,62 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(14.dp),
             contentPadding = PaddingValues(bottom = 24.dp)
         ) {
+            // Dynamic Offline Connection Status Warning Banner
+            item {
+                OfflineStatusBanner(isOnline = isOnline)
+            }
+
+            // Offline Storage Status Banner
+            item {
+                Surface(
+                    color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)),
+                    modifier = Modifier.fillMaxWidth().testTag("offline_sync_indicator_badge")
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.CloudDone,
+                                contentDescription = null,
+                                tint = Color(0xFF16A34A),
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Text(
+                                text = "Persistência Room Local Ativa • Acesso Offline Completo",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    fontSize = 11.sp
+                                )
+                            )
+                        }
+
+                        Surface(
+                            color = Color(0xFFDCFCE7),
+                            shape = RoundedCornerShape(6.dp)
+                        ) {
+                            Text(
+                                text = "OFFLINE OK",
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF166534),
+                                    fontSize = 9.sp
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+
             // Hero Bento Card: Gemini AI Scanner
             item {
                 BentoHeroScannerCard(
@@ -164,7 +271,8 @@ fun HomeScreen(
                     activeCaseTitle = activeCase?.title ?: "Novo Caso no JEC",
                     onStartScanner = {
                         activeCase?.let { viewModel.triggerGeminiAnalysis(it.id) } ?: onOpenAiAssistant()
-                    }
+                    },
+                    onOpenTour = { showInteractiveTour = true }
                 )
             }
 
@@ -233,6 +341,23 @@ fun HomeScreen(
                 )
             }
 
+            // Dicas de Captura & Iluminação Carousel (Confidence Score Boost)
+            item {
+                CaptureTipsCarousel(
+                    onTipClick = { tip ->
+                        if (tip.id == "digital_pdf") {
+                            photoPickerLauncher.launch("application/pdf")
+                        } else {
+                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                                showCamera = true
+                            } else {
+                                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                            }
+                        }
+                    }
+                )
+            }
+
             // Section Header: Auditorias Recentes
             item {
                 Row(
@@ -240,28 +365,63 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "Auditorias & Processos",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
+                    Column {
+                        Text(
+                            text = "Auditorias Recentes (Room DB)",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
                         )
-                    )
+                        Text(
+                            text = "Resumo dos diagnósticos e cálculos com IA Gemini",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        )
+                    }
                     TextButton(onClick = onNavigateToAllCases, modifier = Modifier.testTag("view_all_cases_button")) {
                         Text("Ver Todos", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                     }
                 }
             }
 
-            // Recent Audits Items (Bento Card Style)
-            items(cases.take(3)) { caseItem ->
-                BentoAuditCaseCard(
-                    caseEntity = caseItem,
-                    onClick = {
-                        viewModel.selectCase(caseItem.id)
-                        onNavigateToCalculation(caseItem.id)
+            // Recent Audits Items (Loaded from Room with Gemini JSON Summary)
+            if (cases.isEmpty()) {
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(20.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(text = "📑", fontSize = 28.sp)
+                            Text(
+                                text = "Nenhuma auditoria realizada ainda",
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
+                            )
+                            Text(
+                                text = "Toque no botão de câmera ou no tour para iniciar sua primeira análise contábil.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
-                )
+                }
+            } else {
+                items(cases.take(4)) { caseItem ->
+                    RecentAuditSummaryCard(
+                        caseEntity = caseItem,
+                        onClick = {
+                            viewModel.selectCase(caseItem.id)
+                            onNavigateToCalculation(caseItem.id)
+                        }
+                    )
+                }
             }
 
             // Help Banner Bento Tile
@@ -270,6 +430,21 @@ fun HomeScreen(
             }
         }
         }
+
+        // Interactive Tour Overlay (Guided Tour das funcionalidades de auditoria)
+        LegalAuditGuidedTourDialog(
+            isVisible = showInteractiveTour,
+            onDismiss = { showInteractiveTour = false },
+            onStartAuditNow = {
+                showInteractiveTour = false
+                // Trigger camera or first step
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                    showCamera = true
+                } else {
+                    cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                }
+            }
+        )
     }
 
     if (showCamera) {
@@ -288,7 +463,8 @@ fun HomeScreen(
 fun BentoHeroScannerCard(
     isAnalyzing: Boolean,
     activeCaseTitle: String,
-    onStartScanner: () -> Unit
+    onStartScanner: () -> Unit,
+    onOpenTour: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier
@@ -303,26 +479,59 @@ fun BentoHeroScannerCard(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Surface(
-                    color = Color.White.copy(alpha = 0.2f),
-                    shape = RoundedCornerShape(12.dp)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
+                    Surface(
+                        color = Color.White.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(
+                            text = "✨",
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                            fontSize = 18.sp
+                        )
+                    }
                     Text(
-                        text = "✨",
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                        fontSize = 18.sp
+                        text = "Gemini AI Ativo",
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White.copy(alpha = 0.9f)
+                        )
                     )
                 }
-                Text(
-                    text = "Gemini AI Ativo",
-                    style = MaterialTheme.typography.labelMedium.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.White.copy(alpha = 0.9f)
-                    )
-                )
+
+                Surface(
+                    color = Color.White.copy(alpha = 0.2f),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.clickable { onOpenTour() }.testTag("hero_tour_guide_button")
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Explore,
+                            contentDescription = "Como Funciona",
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text(
+                            text = "Tour Guiado",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                fontSize = 11.sp
+                            )
+                        )
+                    }
+                }
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -684,34 +893,34 @@ fun AnexarProvasBentoSection(
             // Quick Pill Action Chips
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Button(
                     onClick = onAttachContract,
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp),
                     modifier = Modifier.weight(1f).testTag("attach_contract_button")
                 ) {
-                    Text("📄 Contrato", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    Text("🏦 Banco/Contrato", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimaryContainer)
                 }
 
                 OutlinedButton(
                     onClick = onAttachBill,
-                    shape = RoundedCornerShape(16.dp),
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp),
                     modifier = Modifier.weight(1f).testTag("attach_bill_button")
                 ) {
-                    Text("⚡ Conta Luz", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text("📱 Telecom/Fatura", fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 }
 
                 OutlinedButton(
                     onClick = onAttachWhatsapp,
-                    shape = RoundedCornerShape(16.dp),
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp),
                     modifier = Modifier.weight(1f).testTag("attach_whatsapp_button")
                 ) {
-                    Text("💬 WhatsApp", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text("⚡ Energia/Outros", fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 }
             }
 

@@ -183,6 +183,12 @@ fun GeminiAssistantDialog(
                                     // Simulate or trigger real Gemini consultation
                                     kotlinx.coroutines.delay(1200)
                                     val aiAnswer = when {
+                                        userMsg.contains("dobro", ignoreCase = true) || userMsg.contains("repetição", ignoreCase = true) ->
+                                            "A Repetição do Indébito em Dobro (Art. 42, Parágrafo Único do CDC e EAREsp 676.608/STJ) permite cobrar 2x todo o valor indevidamente pago, sem necessidade de provar dolo ou má-fé da empresa."
+                                        userMsg.contains("empréstimo", ignoreCase = true) || userMsg.contains("banco", ignoreCase = true) || userMsg.contains("juros", ignoreCase = true) ->
+                                            "Para contratos bancários e empréstimos, a Súmula 297/STJ autoriza a revisão de cláusulas abusivas. O excesso de juros além da taxa média do BACEN deve ser expurgado e restituído em dobro."
+                                        userMsg.contains("telecom", ignoreCase = true) || userMsg.contains("telefone", ignoreCase = true) || userMsg.contains("sva", ignoreCase = true) ->
+                                            "Em serviços de telecomunicações, a inclusão de Serviços de Valor Adicionado (SVA), antivírus ou bancas de revistas sem contratação expressa é prática abusiva (Art. 39 CDC), ensejando repetição em dobro e dano moral por desvio produtivo."
                                         userMsg.contains("dano moral", ignoreCase = true) ->
                                             "Com base na jurisprudência do JEC para cobrança abusiva e desvio produtivo do consumidor, os valores habitualmente concedidos variam entre R$ 2.000,00 e R$ 5.000,00."
                                         userMsg.contains("prazo", ignoreCase = true) ->

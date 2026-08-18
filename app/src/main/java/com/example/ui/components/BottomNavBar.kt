@@ -1,23 +1,28 @@
 package com.example.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.FolderShared
-import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.FolderShared
-import androidx.compose.material.icons.outlined.Gavel
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 enum class AppNavDestination(
     val title: String,
@@ -36,6 +41,7 @@ enum class AppNavDestination(
 fun AppBottomNavBar(
     currentDestination: AppNavDestination,
     onNavigate: (AppNavDestination) -> Unit,
+    favoriteGuidesCount: Int = 0,
     modifier: Modifier = Modifier
 ) {
     NavigationBar(
@@ -49,10 +55,27 @@ fun AppBottomNavBar(
                 selected = isSelected,
                 onClick = { onNavigate(destination) },
                 icon = {
-                    Icon(
-                        imageVector = if (isSelected) destination.selectedIcon else destination.unselectedIcon,
-                        contentDescription = destination.title
-                    )
+                    BadgedBox(
+                        badge = {
+                            if (destination == AppNavDestination.GUIDES && favoriteGuidesCount > 0) {
+                                Badge(
+                                    containerColor = Color(0xFFF59E0B),
+                                    contentColor = Color.White
+                                ) {
+                                    Text(
+                                        text = "$favoriteGuidesCount",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 10.sp
+                                    )
+                                }
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = if (isSelected) destination.selectedIcon else destination.unselectedIcon,
+                            contentDescription = destination.title
+                        )
+                    }
                 },
                 label = {
                     Text(

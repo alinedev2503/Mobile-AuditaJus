@@ -61,6 +61,30 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _guideFilter = MutableStateFlow("Todos")
     val guideFilter: StateFlow<String> = _guideFilter.asStateFlow()
 
+    val favoriteGuides: StateFlow<List<com.example.data.db.FavoriteGuideEntity>> = repository.allFavoriteGuides
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    fun isGuideFavorite(guideId: String): Flow<Boolean> = repository.isGuideFavorite(guideId)
+
+    fun toggleFavoriteGuide(guideId: String, title: String, category: String, snippet: String, readTimeMinutes: Int = 5, isCurrentlyFavorite: Boolean) {
+        viewModelScope.launch {
+            val entity = com.example.data.db.FavoriteGuideEntity(
+                guideId = guideId,
+                title = title,
+                category = category,
+                snippet = snippet,
+                readTimeMinutes = readTimeMinutes
+            )
+            repository.toggleFavoriteGuide(entity, isCurrentlyFavorite)
+        }
+    }
+
+    fun removeFavoriteGuide(guideId: String) {
+        viewModelScope.launch {
+            repository.removeFavoriteGuide(guideId)
+        }
+    }
+
     init {
         viewModelScope.launch {
             repository.seedInitialDataIfEmpty()
@@ -170,14 +194,119 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun applyCalculationType(
+        caseEntity: CaseEntity,
+        calculationType: String,
+        months: Int = 12,
+        bankContractRate: Double = 8.5,
+        bacenAverageRate: Double = 2.1
+    ) {
+        viewModelScope.launch {
+            val mode = when (calculationType) {
+                "REPETICAO_DOBRO" -> com.example.util.LegalCalculationEngine.CalculationMode.REPETICAO_DOBRO
+                "EMPRESTIMO_BANCARIO" -> com.example.util.LegalCalculationEngine.CalculationMode.EMPRESTIMO_BANCARIO
+                "TELECOM_SERVICOS" -> com.example.util.LegalCalculationEngine.CalculationMode.TELECOM_SERVICOS
+                else -> com.example.util.LegalCalculationEngine.CalculationMode.PADRAO
+            }
+
+            val calcResult = com.example.util.LegalCalculationEngine.calculate(
+                historicalValue = caseEntity.historicalValue,
+                mode = mode,
+                months = months,
+                bankContractRate = bankContractRate,
+                bacenAverageRate = bacenAverageRate
+            )
+
+            val updated = caseEntity.copy(
+                calculationType = calculationType,
+                isRepeticaoEmDobro = (mode == com.example.util.LegalCalculationEngine.CalculationMode.REPETICAO_DOBRO || mode == com.example.util.LegalCalculationEngine.CalculationMode.TELECOM_SERVICOS),
+                bankContractRate = bankContractRate,
+                bacenAverageRate = bacenAverageRate,
+                monthsCalculated = months,
+                inpcCorrection = calcResult.inpcCorrection,
+                defaultInterest = calcResult.defaultInterest,
+                subtotalUpdated = calcResult.totalRecoverable,
+                suggestedMoralDamages = calcResult.suggestedMoralDamages,
+                legalBasis = mode.legalArticle
+            )
+            repository.updateCase(updated)
+        }
+    }
+
     fun exportPetitionPdf(context: Context, caseEntity: CaseEntity, signatureBitmap: android.graphics.Bitmap? = null): File {
-        val file = PdfExportManager.generatePetitionPdf(context, caseEntity, signatureBitmap)
+        val file = PdfExportManager.generatePetitionPdf(context, caseEntity, userSettings.value, signatureBitmap)
         return file
     }
 
-    fun sharePetitionPdf(context: Context, caseEntity: CaseEntity, signatureBitmap: android.graphics.Bitmap? = null) {
-        val file = PdfExportManager.generatePetitionPdf(context, caseEntity, signatureBitmap)
-        PdfExportManager.sharePdfFile(context, file)
+    fun exportDocument(
+        context: Context,
+        caseEntity: CaseEntity,
+        signatureBitmap: android.graphics.Bitmap? = null,
+        clientSignatureBitmap: android.graphics.Bitmap? = null,
+        exportType: com.example.util.PdfExportManager.ExportDocumentType = com.example.util.PdfExportManager.ExportDocumentType.COMBO_PETICAO_E_PROCURACAO,
+        watermarkText: String = "LAUDO PERICIAL JURÍDICO",
+        showWatermark: Boolean = true
+    ): File {
+        return PdfExportManager.generateLegalDocument(
+            context = context,
+            caseEntity = caseEntity,
+            userSettings = userSettings.value,
+            signatureBitmap = signatureBitmap,
+            clientSignatureBitmap = clientSignatureBitmap,
+            exportType = exportType,
+            watermarkText = watermarkText,
+            showWatermark = showWatermark
+        )
+    }
+
+    fun sharePetitionPdf(
+        context: Context,
+        caseEntity: CaseEntity,
+        signatureBitmap: android.graphics.Bitmap? = null,
+        clientSignatureBitmap: android.graphics.Bitmap? = null,
+        exportType: com.example.util.PdfExportManager.ExportDocumentType = com.example.util.PdfExportManager.ExportDocumentType.COMBO_PETICAO_E_PROCURACAO,
+        watermarkText: String = "LAUDO PERICIAL JURÍDICO",
+        showWatermark: Boolean = true
+    ) {
+        val file = PdfExportManager.generateLegalDocument(
+            context = context,
+            caseEntity = caseEntity,
+            userSettings = userSettings.value,
+            signatureBitmap = signatureBitmap,
+            clientSignatureBitmap = clientSignatureBitmap,
+            exportType = exportType,
+            watermarkText = watermarkText,
+            showWatermark = showWatermark
+        )
+        val title = when (exportType) {
+            com.example.util.PdfExportManager.ExportDocumentType.COMBO_PETICAO_E_PROCURACAO -> "Compartilhar Petição e Procuração PDF"
+            com.example.util.PdfExportManager.ExportDocumentType.PROCURACAO_ONLY -> "Compartilhar Procuração Ad Judicia PDF"
+            com.example.util.PdfExportManager.ExportDocumentType.PETICAO_ONLY -> "Compartilhar Petição Inicial PDF"
+            com.example.util.PdfExportManager.ExportDocumentType.LAUDO_AUDITORIA_E_CALCULO -> "Compartilhar Laudo de Auditoria e Juros PDF"
+        }
+        PdfExportManager.sharePdfFile(context, file, title)
+    }
+
+    fun updateLawyerProfile(
+        oabNumber: String,
+        oabUf: String,
+        lawFirmName: String,
+        officeAddress: String,
+        officePhone: String,
+        logoUri: String,
+        useCustomLetterhead: Boolean
+    ) {
+        viewModelScope.launch {
+            userPreferences.updateLawyerProfile(
+                oabNumber = oabNumber,
+                oabUf = oabUf,
+                lawFirmName = lawFirmName,
+                officeAddress = officeAddress,
+                officePhone = officePhone,
+                logoUri = logoUri,
+                useCustomLetterhead = useCustomLetterhead
+            )
+        }
     }
 
     fun setLoggedIn(isLoggedIn: Boolean, name: String? = null, email: String? = null) {

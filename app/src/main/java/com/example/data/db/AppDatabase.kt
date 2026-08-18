@@ -10,9 +10,10 @@ import androidx.room.RoomDatabase
         CaseEntity::class,
         EvidencePhotoEntity::class,
         HearingDeadlineEntity::class,
-        PetitionTemplateEntity::class
+        PetitionTemplateEntity::class,
+        FavoriteGuideEntity::class
     ],
-    version = 1,
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -20,6 +21,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun evidencePhotoDao(): EvidencePhotoDao
     abstract fun hearingDeadlineDao(): HearingDeadlineDao
     abstract fun petitionTemplateDao(): PetitionTemplateDao
+    abstract fun favoriteGuideDao(): FavoriteGuideDao
 
     companion object {
         @Volatile
@@ -30,8 +32,10 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "contador_juridico_db"
-                ).build()
+                    "legal_calculator_db"
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }

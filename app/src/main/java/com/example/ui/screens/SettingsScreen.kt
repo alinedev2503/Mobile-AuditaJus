@@ -30,6 +30,8 @@ import com.example.ui.MainViewModel
 fun SettingsScreen(
     viewModel: MainViewModel,
     onNavigateToTerms: () -> Unit,
+    onNavigateToPlans: () -> Unit = {},
+    onNavigateToLawyerCustomization: () -> Unit = {},
     onLogout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -136,12 +138,90 @@ fun SettingsScreen(
                 }
             }
 
-            // Section 1: CONTA
+            // Section 1: CONTA & ASSINATURA
             item {
-                SettingsSectionCard(title = "CONTA") {
+                SettingsSectionCard(title = "ASSINATURA & PLANO") {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onNavigateToPlans() }
+                            .testTag("pro_plan_subscription_row")
+                            .padding(horizontal = 20.dp, vertical = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.AutoAwesome,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                            Column {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    Text(
+                                        text = "Plano Advogado Pro",
+                                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                    Surface(
+                                        color = MaterialTheme.colorScheme.primaryContainer,
+                                        shape = RoundedCornerShape(6.dp)
+                                    ) {
+                                        Text(
+                                            text = "ATIVO",
+                                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                            style = MaterialTheme.typography.labelSmall.copy(
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                fontSize = 10.sp
+                                            )
+                                        )
+                                    }
+                                }
+                                Text(
+                                    text = "Auditorias e Petições Ilimitadas",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
+                            }
+                        }
+                        Icon(
+                            imageVector = Icons.Default.ChevronRight,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.outline,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            }
+
+            // Section 2: CONTA & ADVOCACIA
+            item {
+                SettingsSectionCard(title = "CONTA & DADOS DO ADVOGADO") {
+                    SettingsClickableRow(
+                        icon = Icons.Outlined.Badge,
+                        title = "Timbre & Dados da OAB / Escritório",
+                        onClick = { onNavigateToLawyerCustomization() },
+                        testTag = "lawyer_customization_row"
+                    )
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     SettingsClickableRow(
                         icon = Icons.Outlined.Person,
-                        title = "Editar Perfil",
+                        title = "Editar Perfil do Usuário",
                         onClick = { showEditProfileDialog = true },
                         testTag = "edit_profile_row"
                     )

@@ -58,6 +58,22 @@ class LegalAuditRepository(private val db: AppDatabase) {
         db.hearingDeadlineDao().update(item.copy(isCompleted = !item.isCompleted))
     }
 
+    val allFavoriteGuides = db.favoriteGuideDao().getAllFavoriteGuides()
+
+    fun isGuideFavorite(guideId: String) = db.favoriteGuideDao().isGuideFavorite(guideId)
+
+    suspend fun toggleFavoriteGuide(favorite: com.example.data.db.FavoriteGuideEntity, isCurrentlyFavorite: Boolean) = withContext(Dispatchers.IO) {
+        if (isCurrentlyFavorite) {
+            db.favoriteGuideDao().deleteFavoriteById(favorite.guideId)
+        } else {
+            db.favoriteGuideDao().insertFavorite(favorite)
+        }
+    }
+
+    suspend fun removeFavoriteGuide(guideId: String) = withContext(Dispatchers.IO) {
+        db.favoriteGuideDao().deleteFavoriteById(guideId)
+    }
+
     suspend fun analyzeCaseWithGemini(context: Context, caseId: Long, userInstructions: String = ""): Result<CaseEntity> = withContext(Dispatchers.IO) {
         try {
             val caseEntity = db.caseDao().getCaseByIdDirect(caseId) ?: return@withContext Result.failure(Exception("Caso não encontrado"))
@@ -165,6 +181,9 @@ class LegalAuditRepository(private val db: AppDatabase) {
                         fundamentosText = fundamentosText,
                         pedidosText = pedidosText,
                         legalBasis = "Auditoria (Confiança: $confidenceScore)",
+                        rawGeminiJson = cleanJson,
+                        identifiedAbuseSummary = identifiedAbuse,
+                        confidenceScore = confidenceScore,
                         status = "PDF_READY"
                     )
 

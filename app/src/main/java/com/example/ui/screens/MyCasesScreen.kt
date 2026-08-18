@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.FolderOff
+import androidx.compose.material.icons.outlined.Timeline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,6 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.db.CaseEntity
 import com.example.ui.MainViewModel
+import com.example.ui.components.AuditsTimelineSection
+import com.example.ui.components.OfflineStatusBanner
+import com.example.util.rememberIsOnline
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,10 +38,13 @@ fun MyCasesScreen(
     onNavigateToPetition: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isOnline by rememberIsOnline()
     val cases by viewModel.cases.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val selectedFilter by viewModel.selectedCaseFilter.collectAsState()
     var showNewCaseDialog by remember { mutableStateOf(false) }
+
+    var selectedViewMode by remember { mutableStateOf(0) } // 0 = Lista de Casos, 1 = Linha do Tempo
 
     val filteredCases = cases.filter { caseEntity ->
         val matchesQuery = caseEntity.title.contains(searchQuery, ignoreCase = true) ||
@@ -86,114 +93,96 @@ fun MyCasesScreen(
                     .padding(horizontal = 24.dp, vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(
-                    text = "My Cases",
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Serif
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = "Manage and track the progress of your legal audits.",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                // Search Bar
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { viewModel.setSearchQuery(it) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("search_cases_input"),
-                    placeholder = { Text("Search cases...") },
-                    leadingIcon = {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                    },
-                    trailingIcon = {
-                        if (searchQuery.isNotEmpty()) {
-                            IconButton(onClick = { viewModel.setSearchQuery("") }) {
-                                Icon(imageVector = Icons.Default.Close, contentDescription = "Clear")
-                            }
-                        }
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                    ),
-                    singleLine = true
-                )
-            }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = "Meus Casos",
+                            style = MaterialTheme.typography.headlineMedium.copy(
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = FontFamily.Serif
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "Acompanhe e audite processos no JEC",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
 
-            // Filter Tabs
-            LazyRow(
-                modifier = Modifier.padding(horizontal = 24.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                val filterOptions = listOf("All Cases", "Active", "Completed", "Archived")
-                items(filterOptions) { label ->
-                    val isSelected = selectedFilter == label || (selectedFilter == "All" && label == "All Cases") || (selectedFilter == "Todos" && label == "All Cases")
-                    
-                    Surface(
-                        shape = CircleShape,
-                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLowest,
-                        contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                        border = if (isSelected) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                // Dynamic Offline Connection Status Warning Banner
+                OfflineStatusBanner(isOnline = isOnline)
+                
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // View Mode Tabs: [📋 Lista de Casos] vs [⏱️ Linha do Tempo de Auditorias]
+                PrimaryTabRow(
+                    selectedTabIndex = selectedViewMode,
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    modifier = Modifier.clip(RoundedCornerShape(16.dp))
+                ) {
+                    Tab(
+                        selected = selectedViewMode == 0,
+                        onClick = { selectedViewMode = 0 },
+                        text = { Text("Lista de Casos (${cases.size})", fontWeight = FontWeight.Bold, fontSize = 12.sp) },
+                        icon = { Icon(Icons.Default.FolderShared, contentDescription = null, modifier = Modifier.size(16.dp)) }
+                    )
+                    Tab(
+                        selected = selectedViewMode == 1,
+                        onClick = { selectedViewMode = 1 },
+                        text = { Text("Linha do Tempo", fontWeight = FontWeight.Bold, fontSize = 12.sp) },
+                        icon = { Icon(Icons.Outlined.Timeline, contentDescription = null, modifier = Modifier.size(16.dp)) }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+                
+                // Search Bar (visível na aba de lista de casos)
+                if (selectedViewMode == 0) {
+                    OutlinedTextField(
+                        value = searchQuery,
+                        onValueChange = { viewModel.setSearchQuery(it) },
                         modifier = Modifier
-                            .clip(CircleShape)
-                            .clickable { viewModel.setCaseFilter(if (label == "All Cases") "All" else label) }
-                    ) {
-                        Text(
-                            text = label,
-                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
-                        )
-                    }
+                            .fillMaxWidth()
+                            .testTag("search_cases_input"),
+                        placeholder = { Text("Pesquisar processos, partes ou categorias...") },
+                        leadingIcon = {
+                            Icon(imageVector = Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                        },
+                        trailingIcon = {
+                            if (searchQuery.isNotEmpty()) {
+                                IconButton(onClick = { viewModel.setSearchQuery("") }) {
+                                    Icon(imageVector = Icons.Default.Close, contentDescription = "Clear")
+                                }
+                            }
+                        },
+                        shape = RoundedCornerShape(16.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                        ),
+                        singleLine = true
+                    )
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Cases List
-            if (filteredCases.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 24.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = Icons.Outlined.FolderOff,
-                            contentDescription = null,
-                            modifier = Modifier.size(64.dp),
-                            tint = MaterialTheme.colorScheme.secondary
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "No cases found",
-                            style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.secondary)
-                        )
-                    }
-                }
-            } else {
+            // Timeline View
+            if (selectedViewMode == 1) {
                 LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    contentPadding = PaddingValues(bottom = 100.dp)
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 90.dp)
                 ) {
-                    items(filteredCases) { caseEntity ->
-                        MyCaseCardItem(
-                            caseEntity = caseEntity,
-                            onClick = {
+                    item {
+                        AuditsTimelineSection(
+                            cases = cases,
+                            onCaseClick = { caseEntity ->
                                 viewModel.selectCase(caseEntity.id)
                                 if (caseEntity.status == "PDF_READY" || caseEntity.status == "SENT_TO_COURT") {
                                     onNavigateToPetition(caseEntity.id)
@@ -203,9 +192,99 @@ fun MyCasesScreen(
                             }
                         )
                     }
-                    
-                    item {
-                        StartNewCaseCard(onClick = { showNewCaseDialog = true })
+                }
+            } else {
+                // List View: Filter Tabs
+                LazyRow(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    val filterOptions = listOf("Todos os Casos", "Ativos", "Concluídos", "Enviados")
+                    items(filterOptions) { label ->
+                        val isSelected = when (label) {
+                            "Todos os Casos" -> selectedFilter == "All" || selectedFilter == "Todos" || selectedFilter == "All Cases"
+                            "Ativos" -> selectedFilter == "Active" || selectedFilter == "Ativos"
+                            "Concluídos" -> selectedFilter == "Completed" || selectedFilter == "Concluídos"
+                            "Enviados" -> selectedFilter == "Archived" || selectedFilter == "Enviados"
+                            else -> false
+                        }
+                        
+                        Surface(
+                            shape = CircleShape,
+                            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLowest,
+                            contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                            border = if (isSelected) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .clickable {
+                                    val mapped = when (label) {
+                                        "Todos os Casos" -> "All"
+                                        "Ativos" -> "Active"
+                                        "Concluídos" -> "Completed"
+                                        "Enviados" -> "Archived"
+                                        else -> label
+                                    }
+                                    viewModel.setCaseFilter(mapped)
+                                }
+                        ) {
+                            Text(
+                                text = label,
+                                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                                modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Cases List
+                if (filteredCases.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                imageVector = Icons.Outlined.FolderOff,
+                                contentDescription = null,
+                                modifier = Modifier.size(64.dp),
+                                tint = MaterialTheme.colorScheme.secondary
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = "Nenhum caso encontrado",
+                                style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.secondary)
+                            )
+                        }
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 24.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        contentPadding = PaddingValues(bottom = 100.dp)
+                    ) {
+                        items(filteredCases) { caseEntity ->
+                            MyCaseCardItem(
+                                caseEntity = caseEntity,
+                                onClick = {
+                                    viewModel.selectCase(caseEntity.id)
+                                    if (caseEntity.status == "PDF_READY" || caseEntity.status == "SENT_TO_COURT") {
+                                        onNavigateToPetition(caseEntity.id)
+                                    } else {
+                                        onNavigateToCalculation(caseEntity.id)
+                                    }
+                                }
+                            )
+                        }
+                        
+                        item {
+                            StartNewCaseCard(onClick = { showNewCaseDialog = true })
+                        }
                     }
                 }
             }
@@ -248,179 +327,113 @@ fun MyCaseCardItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                CaseStatusPill(status = caseEntity.status)
+                StatusPill(status = caseEntity.status)
                 Text(
                     text = caseEntity.date,
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            
-            // Title & Description
+
+            // Case Info
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
                     text = caseEntity.title,
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Serif
-                    ),
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = caseEntity.description,
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        lineHeight = 22.sp
-                    ),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 2
+                    text = "Categoria: ${caseEntity.category}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                if (!caseEntity.processNumber.isNullOrEmpty()) {
+                    Text(
+                        text = "Processo: ${caseEntity.processNumber}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                }
             }
-            
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-            
-            // Bottom Action Row
-            CaseActionRow(caseEntity = caseEntity)
-        }
-    }
-}
 
-@Composable
-fun CaseStatusPill(status: String) {
-    val (icon, text, bgColor, textColor) = when (status) {
-        "UPLOAD", "ANALYSING" -> listOf(
-            Icons.Default.Sync,
-            "Analyzing",
-            MaterialTheme.colorScheme.surfaceVariant,
-            MaterialTheme.colorScheme.primary
-        )
-        "PDF_READY" -> listOf(
-            Icons.Default.TaskAlt,
-            "PDF Ready",
-            Color(0xFFE8F5E9),
-            Color(0xFF2E7D32) // Green colors
-        )
-        "SENT_TO_COURT" -> listOf(
-            Icons.Default.Send,
-            "Sent to Court",
-            MaterialTheme.colorScheme.surfaceContainer,
-            MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        else -> listOf(
-            Icons.Default.Info,
-            "Unknown",
-            MaterialTheme.colorScheme.surfaceVariant,
-            MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
+            Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
-    Surface(
-        shape = CircleShape,
-        color = bgColor as Color
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
-        ) {
-            Icon(
-                imageVector = icon as androidx.compose.ui.graphics.vector.ImageVector,
-                contentDescription = null,
-                tint = textColor as Color,
-                modifier = Modifier.size(14.dp)
-            )
-            Text(
-                text = text as String,
-                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                color = textColor
-            )
-        }
-    }
-}
-
-@Composable
-fun CaseActionRow(caseEntity: CaseEntity) {
-    when (caseEntity.status) {
-        "UPLOAD", "ANALYSING" -> {
+            // Values & Action Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Avatar circle
-                Surface(
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    border = BorderStroke(2.dp, MaterialTheme.colorScheme.surfaceContainerLowest),
-                    modifier = Modifier.size(32.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            text = "DP",
-                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                Column {
+                    Text(
+                        text = "Valor Liquidado",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    val total = caseEntity.subtotalUpdated + caseEntity.suggestedMoralDamages
+                    Text(
+                        text = "R$ %,.2f".format(total),
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
                         )
-                    }
+                    )
                 }
-                
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        text = "View Details",
-                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.primary
+                        text = "Ver Detalhes",
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     )
                     Icon(
-                        imageVector = Icons.Default.ArrowForward,
+                        imageVector = Icons.Default.ChevronRight,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(16.dp)
                     )
                 }
             }
         }
-        "PDF_READY" -> {
-            Button(
-                onClick = { /* Handle Download */ },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                ),
-                shape = CircleShape
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Download,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp)
+    }
+}
+
+@Composable
+fun StatusPill(status: String) {
+    val (color, text) = when (status) {
+        "UPLOAD" -> Pair(Color(0xFFE65100), "Em Envio")
+        "ANALYSING" -> Pair(Color(0xFF1976D2), "Analisando IA")
+        "PDF_READY" -> Pair(Color(0xFF2E7D32), "Petição Pronta")
+        "SENT_TO_COURT" -> Pair(Color(0xFF6A1B9A), "Protocolado")
+        else -> Pair(Color(0xFF757575), "Pendente")
+    }
+
+    Surface(
+        color = color.copy(alpha = 0.12f),
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(6.dp)
+                    .background(color, CircleShape)
+            )
+            Text(
+                text = text,
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = color
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Download Report",
-                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
-                )
-            }
-        }
-        "SENT_TO_COURT" -> {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Gavel,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = "Process # ${caseEntity.processNumber ?: "0012345-67.2023"}",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+            )
         }
     }
 }
@@ -430,49 +443,43 @@ fun StartNewCaseCard(onClick: () -> Unit) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() },
+            .clickable { onClick() }
+            .testTag("start_new_case_dashed_card"),
         shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)) // Use dashed effect if possible, but solid is fine for Compose easily
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
-        // Compose doesn't have an easy dashed border out of the box without Custom Modifier, using a subtle solid border
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Surface(
-                shape = CircleShape,
                 color = MaterialTheme.colorScheme.primaryContainer,
-                modifier = Modifier.size(48.dp)
+                shape = CircleShape,
+                modifier = Modifier.size(44.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.size(24.dp)
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Start a New Case",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Serif
-                ),
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Upload your documents for a new automated legal audit.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-            )
+            Column {
+                Text(
+                    text = "Cadastrar Novo Processo",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                )
+                Text(
+                    text = "Faça a auditoria documental com a IA",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
@@ -484,51 +491,61 @@ fun NewCaseCreationDialog(
     onCreate: (String, String, String) -> Unit
 ) {
     var title by remember { mutableStateOf("") }
-    var category by remember { mutableStateOf("Energia") }
-    var description by remember { mutableStateOf("") }
-
-    val categories = listOf("Energia", "Telefonia", "FGTS", "Trabalhista", "Voos", "Outros")
+    var category by remember { mutableStateOf("Bancário") }
+    var desc by remember { mutableStateOf("") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text("Iniciar Nova Auditoria", fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif)
+            Text("Novo Processo de Auditoria", fontWeight = FontWeight.Bold)
         },
         text = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
                     label = { Text("Título do Caso") },
-                    placeholder = { Text("ex: Cobrança Abusiva Fatura Energia") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("new_case_title_input"),
-                    singleLine = true
+                    placeholder = { Text("Ex: Revisional Financiamento Auto") },
+                    modifier = Modifier.fillMaxWidth()
                 )
 
-                Text("Categoria:", style = MaterialTheme.typography.labelMedium)
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    items(categories) { cat ->
-                        FilterChip(
-                            selected = category == cat,
-                            onClick = { category = cat },
-                            label = { Text(cat) }
-                        )
+                var expanded by remember { mutableStateOf(false) }
+                val categories = listOf("Bancário", "Telecom", "Consumidor", "Energia / Luz", "Trabalhista", "Voos / Aéreo")
+
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = it }
+                ) {
+                    OutlinedTextField(
+                        value = category,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Categoria") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        modifier = Modifier.menuAnchor().fillMaxWidth()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        categories.forEach { cat ->
+                            DropdownMenuItem(
+                                text = { Text(cat) },
+                                onClick = {
+                                    category = cat
+                                    expanded = false
+                                }
+                            )
+                        }
                     }
                 }
 
                 OutlinedTextField(
-                    value = description,
-                    onValueChange = { description = it },
-                    label = { Text("Descrição dos Fatos") },
-                    placeholder = { Text("Descreva resumidamente os valores cobrados...") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("new_case_desc_input"),
+                    value = desc,
+                    onValueChange = { desc = it },
+                    label = { Text("Resumo do Abuso / Descrição") },
+                    placeholder = { Text("Cobrança indevida de seguro prestamista e taxa abusiva...") },
+                    modifier = Modifier.fillMaxWidth(),
                     maxLines = 3
                 )
             }
@@ -537,13 +554,12 @@ fun NewCaseCreationDialog(
             Button(
                 onClick = {
                     if (title.isNotBlank()) {
-                        onCreate(title, category, description)
+                        onCreate(title, category, desc)
                     }
                 },
-                enabled = title.isNotBlank(),
-                modifier = Modifier.testTag("confirm_create_case_button")
+                enabled = title.isNotBlank()
             ) {
-                Text("Criar e Anexar")
+                Text("Criar Processo")
             }
         },
         dismissButton = {
