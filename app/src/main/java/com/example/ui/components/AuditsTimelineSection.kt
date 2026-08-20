@@ -17,13 +17,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.db.CaseEntity
+import com.example.ui.theme.caseStatusVisual
 
 @Composable
 fun AuditsTimelineSection(
@@ -172,13 +171,11 @@ fun TimelineAuditNodeItem(
     isLast: Boolean,
     onClick: () -> Unit
 ) {
-    val (statusLabel, statusColor, statusBg, statusIcon) = when (caseItem.status) {
-        "UPLOAD" -> StatusDisplay("Em Envio", Color(0xFFD97706), Color(0xFFFEF3C7), Icons.Default.CloudUpload)
-        "ANALYSING" -> StatusDisplay("Processando IA", Color(0xFF2563EB), Color(0xFFDBEAFE), Icons.Default.AutoAwesome)
-        "PDF_READY" -> StatusDisplay("Petição Pronta", Color(0xFF16A34A), Color(0xFFDCFCE7), Icons.Default.CheckCircle)
-        "SENT_TO_COURT" -> StatusDisplay("Protocolado JEC", Color(0xFF7C3AED), Color(0xFFEDE9FE), Icons.Default.AccountBalance)
-        else -> StatusDisplay("Pendente", Color(0xFF6B7280), Color(0xFFF3F4F6), Icons.Default.Schedule)
-    }
+    val statusVisual = caseStatusVisual(caseItem.status)
+    val statusLabel = statusVisual.label
+    val statusColor = statusVisual.contentColor
+    val statusBg = statusVisual.containerColor
+    val statusIcon = statusVisual.icon
 
     val totalCalculated = caseItem.subtotalUpdated + caseItem.suggestedMoralDamages
 
@@ -353,9 +350,3 @@ fun TimelineAuditNodeItem(
     }
 }
 
-private data class StatusDisplay(
-    val label: String,
-    val color: Color,
-    val bg: Color,
-    val icon: ImageVector
-)

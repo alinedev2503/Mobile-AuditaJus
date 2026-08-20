@@ -2,68 +2,120 @@ package com.example.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+
+// ============================================================================
+// Colors — mapped 1:1 from the `colors:` front-matter of each spec.
+// ============================================================================
 
 private val LightColorScheme = lightColorScheme(
-  primary = Color(0xFF004AC6),
-  onPrimary = Color(0xFFFFFFFF),
-  primaryContainer = Color(0xFF2563EB),
-  onPrimaryContainer = Color(0xFFEEEFF1),
-  secondary = Color(0xFF565E74),
-  onSecondary = Color.White,
-  secondaryContainer = Color(0xFFDAE2FD),
-  onSecondaryContainer = Color(0xFF131B2E),
-  background = Color(0xFFF8F9FF),
-  onBackground = Color(0xFF0B1C30),
-  surface = Color(0xFFF8F9FF),
-  onSurface = Color(0xFF0B1C30),
-  surfaceVariant = Color(0xFFE5EEFF),
-  onSurfaceVariant = Color(0xFF434655),
-  surfaceContainerLowest = Color(0xFFFFFFFF),
-  surfaceContainerLow = Color(0xFFEFF4FF),
-  surfaceContainer = Color(0xFFE5EEFF),
-  surfaceContainerHigh = Color(0xFFDCE9FF),
-  surfaceContainerHighest = Color(0xFFD3E4FE),
-  outline = Color(0xFF737686),
-  outlineVariant = Color(0xFFC3C6D7),
-  error = BentoError,
-  errorContainer = BentoErrorContainer,
-  onErrorContainer = BentoOnErrorContainer
+  primary = LightPrimary,
+  onPrimary = LightOnPrimary,
+  primaryContainer = LightPrimaryContainer,
+  onPrimaryContainer = LightOnPrimaryContainer,
+  inversePrimary = LightInversePrimary,
+  secondary = LightSecondary,
+  onSecondary = LightOnSecondary,
+  secondaryContainer = LightSecondaryContainer,
+  onSecondaryContainer = LightOnSecondaryContainer,
+  tertiary = LightTertiary,
+  onTertiary = LightOnTertiary,
+  tertiaryContainer = LightTertiaryContainer,
+  onTertiaryContainer = LightOnTertiaryContainer,
+  background = LightBackground,
+  onBackground = LightOnBackground,
+  surface = LightSurface,
+  onSurface = LightOnSurface,
+  surfaceVariant = LightSurfaceVariant,
+  onSurfaceVariant = LightOnSurfaceVariant,
+  surfaceTint = LightSurfaceTint,
+  surfaceContainerLowest = LightSurfaceContainerLowest,
+  surfaceContainerLow = LightSurfaceContainerLow,
+  surfaceContainer = LightSurfaceContainer,
+  surfaceContainerHigh = LightSurfaceContainerHigh,
+  surfaceContainerHighest = LightSurfaceContainerHighest,
+  surfaceDim = LightSurfaceDim,
+  surfaceBright = LightSurfaceBright,
+  inverseSurface = LightInverseSurface,
+  inverseOnSurface = LightInverseOnSurface,
+  outline = LightOutline,
+  outlineVariant = LightOutlineVariant,
+  error = LightError,
+  onError = LightOnError,
+  errorContainer = LightErrorContainer,
+  onErrorContainer = LightOnErrorContainer,
 )
 
 private val DarkColorScheme = darkColorScheme(
-  primary = Color(0xFFB4C5FF),
-  onPrimary = Color(0xFF002A78),
-  primaryContainer = Color(0xFF2563EB),
-  onPrimaryContainer = Color(0xFFEEEFF1),
-  secondary = Color(0xFFB9C7E0),
-  onSecondary = Color(0xFF233144),
-  secondaryContainer = Color(0xFF3C4A5E),
-  onSecondaryContainer = Color(0xFFABB9D2),
-  background = Color(0xFF101415),
-  onBackground = Color(0xFFE0E3E5),
-  surface = Color(0xFF101415),
-  onSurface = Color(0xFFE0E3E5),
-  surfaceVariant = Color(0xFF1D2022),
-  onSurfaceVariant = Color(0xFFC3C6D7),
-  surfaceContainerLowest = Color(0xFF0B0F10),
-  surfaceContainerLow = Color(0xFF191C1E),
-  surfaceContainer = Color(0xFF1D2022),
-  surfaceContainerHigh = Color(0xFF272A2C),
-  surfaceContainerHighest = Color(0xFF323537),
-  outline = Color(0xFF8D90A0),
-  outlineVariant = Color(0xFF434655),
-  error = Color(0xFFFFB4AB),
-  errorContainer = Color(0xFF93000A),
-  onErrorContainer = Color(0xFFFFDAD6)
+  primary = DarkPrimary,
+  onPrimary = DarkOnPrimary,
+  primaryContainer = DarkPrimaryContainer,
+  onPrimaryContainer = DarkOnPrimaryContainer,
+  inversePrimary = DarkInversePrimary,
+  secondary = DarkSecondary,
+  onSecondary = DarkOnSecondary,
+  secondaryContainer = DarkSecondaryContainer,
+  onSecondaryContainer = DarkOnSecondaryContainer,
+  tertiary = DarkTertiary,
+  onTertiary = DarkOnTertiary,
+  tertiaryContainer = DarkTertiaryContainer,
+  onTertiaryContainer = DarkOnTertiaryContainer,
+  background = DarkBackground,
+  onBackground = DarkOnBackground,
+  surface = DarkSurface,
+  onSurface = DarkOnSurface,
+  surfaceVariant = DarkSurfaceVariant,
+  onSurfaceVariant = DarkOnSurfaceVariant,
+  surfaceTint = DarkSurfaceTint,
+  surfaceContainerLowest = DarkSurfaceContainerLowest,
+  surfaceContainerLow = DarkSurfaceContainerLow,
+  surfaceContainer = DarkSurfaceContainer,
+  surfaceContainerHigh = DarkSurfaceContainerHigh,
+  surfaceContainerHighest = DarkSurfaceContainerHighest,
+  surfaceDim = DarkSurfaceDim,
+  surfaceBright = DarkSurfaceBright,
+  inverseSurface = DarkInverseSurface,
+  inverseOnSurface = DarkInverseOnSurface,
+  outline = DarkOutline,
+  outlineVariant = DarkOutlineVariant,
+  error = DarkError,
+  onError = DarkOnError,
+  errorContainer = DarkErrorContainer,
+  onErrorContainer = DarkOnErrorContainer,
 )
+
+// ============================================================================
+// Shapes — mapped from the `rounded:` front-matter, which is byte-for-byte
+// identical across all three design docs (sm .25rem / DEFAULT .5rem /
+// md .75rem / lg 1rem / xl 1.5rem / full 9999px). 1rem = 16dp @ default
+// density scale.
+//
+// Screens use `MaterialTheme.shapes.*` directly for standard components,
+// and the `Pill` shape below for buttons, chips and status tags — matching
+// the fully-rounded buttons/chips visible throughout the approved Stitch
+// screens (login, onboarding, "Aceitar e Continuar", case-status chips…).
+// ============================================================================
+
+val AppShapes = Shapes(
+  extraSmall = RoundedCornerShape(4.dp), // sm  — .25rem
+  small = RoundedCornerShape(8.dp), // DEFAULT — .5rem
+  medium = RoundedCornerShape(12.dp), // md — .75rem
+  large = RoundedCornerShape(16.dp), // lg — 1rem — cards, modals, sheets
+  extraLarge = RoundedCornerShape(24.dp), // xl — 1.5rem — large surfaces
+)
+
+/** Fully-rounded ("pill") shape — buttons, chips, status tags, search fields. */
+val Pill = CircleShape
 
 @Composable
 fun MyApplicationTheme(
@@ -83,7 +135,7 @@ fun MyApplicationTheme(
   MaterialTheme(
     colorScheme = colorScheme,
     typography = Typography,
-    content = content
+    shapes = AppShapes,
+    content = content,
   )
 }
-

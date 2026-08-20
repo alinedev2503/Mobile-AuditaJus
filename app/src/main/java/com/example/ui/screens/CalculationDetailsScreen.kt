@@ -904,7 +904,6 @@ fun CalculationTypeSelectorDialog(
             Text(
                 text = "Metodologia de Cálculo",
                 fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Serif
             )
         },
         text = {

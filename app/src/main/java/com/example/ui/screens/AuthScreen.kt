@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -64,12 +63,12 @@ fun AuthScreen(
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             Icon(imageVector = Icons.Default.Gavel, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(48.dp))
-                            Text("Contador Jurídico Pro", style = MaterialTheme.typography.headlineLarge.copy(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.primary)
+                            Text("Contador Jurídico Pro", style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.primary)
                         }
                         Spacer(modifier = Modifier.height(48.dp))
                         Text(
                             text = "Streamline Your Legal Audits",
-                            style = MaterialTheme.typography.displayMedium.copy(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold),
+                            style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Bold),
                             color = Color.White
                         )
                         Spacer(modifier = Modifier.height(16.dp))
@@ -147,14 +146,13 @@ fun AuthForm(
                         modifier = Modifier.padding(bottom = 32.dp)
                     ) {
                         Icon(imageVector = Icons.Default.Gavel, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(36.dp))
-                        Text("Contador Jurídico Pro", style = MaterialTheme.typography.titleLarge.copy(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.primary)
+                        Text("Contador Jurídico Pro", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.primary)
                     }
                 }
                 
                 Text(
                     text = if (isSignUp) "Create Account" else "Welcome Back",
                     style = MaterialTheme.typography.headlineMedium.copy(
-                        fontFamily = FontFamily.Serif,
                         fontWeight = FontWeight.Bold
                     ),
                     color = MaterialTheme.colorScheme.onSurface

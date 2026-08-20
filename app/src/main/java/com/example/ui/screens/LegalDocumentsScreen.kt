@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,7 +60,6 @@ fun LegalDocumentsScreen(
                             text = "Contador Jurídico Pro",
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.Bold,
-                                fontFamily = FontFamily.Serif
                             ),
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -118,7 +116,6 @@ fun LegalDocumentsScreen(
                         Text(
                             text = "Li e concordo com os Termos de Uso e a Política de Privacidade.",
                             style = MaterialTheme.typography.bodyMedium.copy(
-                                fontFamily = FontFamily.Serif,
                                 fontSize = 15.sp
                             ),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -199,7 +196,6 @@ fun LegalDocumentsScreen(
                 Text(
                     text = "Documentos Legais",
                     style = MaterialTheme.typography.headlineMedium.copy(
-                        fontFamily = FontFamily.Serif,
                         fontWeight = FontWeight.Bold
                     ),
                     color = MaterialTheme.colorScheme.onSurface
@@ -208,7 +204,6 @@ fun LegalDocumentsScreen(
                 Text(
                     text = "Última atualização: 24 de Outubro de 2023",
                     style = MaterialTheme.typography.bodyMedium.copy(
-                        fontFamily = FontFamily.Serif
                     ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -317,7 +312,6 @@ fun TermosDeUsoContent() {
         Text(
             text = "Termos e Condições de Uso",
             style = MaterialTheme.typography.headlineSmall.copy(
-                fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold
             ),
             color = MaterialTheme.colorScheme.onSurface
@@ -364,7 +358,6 @@ fun PrivacidadeContent() {
         Text(
             text = "Política de Privacidade",
             style = MaterialTheme.typography.headlineSmall.copy(
-                fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold
             ),
             color = MaterialTheme.colorScheme.onSurface
@@ -413,7 +406,6 @@ fun LegalSection(title: String, body: String, warning: String? = null) {
             text = body,
             style = MaterialTheme.typography.bodyLarge.copy(
                 lineHeight = 28.sp,
-                fontFamily = FontFamily.Serif
             ),
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -423,7 +415,6 @@ fun LegalSection(title: String, body: String, warning: String? = null) {
                 text = warning,
                 style = MaterialTheme.typography.bodyMedium.copy(
                     lineHeight = 24.sp,
-                    fontFamily = FontFamily.Serif
                 ),
                 color = MaterialTheme.colorScheme.error
             )

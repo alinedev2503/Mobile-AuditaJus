@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -255,7 +254,6 @@ fun LawyerCustomizationScreen(
                                                 text = if (lawFirmName.isNotBlank()) lawFirmName else "Silva & Associados Advocacia",
                                                 style = MaterialTheme.typography.titleMedium.copy(
                                                     fontWeight = FontWeight.Bold,
-                                                    fontFamily = FontFamily.Serif,
                                                     color = Color(0xFF0F2D5A)
                                                 )
                                             )

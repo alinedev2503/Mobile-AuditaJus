@@ -18,9 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,6 +26,8 @@ import com.example.data.db.CaseEntity
 import com.example.ui.MainViewModel
 import com.example.ui.components.AuditsTimelineSection
 import com.example.ui.components.OfflineStatusBanner
+import com.example.ui.theme.Pill
+import com.example.ui.theme.caseStatusVisual
 import com.example.util.rememberIsOnline
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,7 +103,6 @@ fun MyCasesScreen(
                             text = "Meus Casos",
                             style = MaterialTheme.typography.headlineMedium.copy(
                                 fontWeight = FontWeight.Bold,
-                                fontFamily = FontFamily.Serif
                             ),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -405,33 +404,27 @@ fun MyCaseCardItem(
 
 @Composable
 fun StatusPill(status: String) {
-    val (color, text) = when (status) {
-        "UPLOAD" -> Pair(Color(0xFFE65100), "Em Envio")
-        "ANALYSING" -> Pair(Color(0xFF1976D2), "Analisando IA")
-        "PDF_READY" -> Pair(Color(0xFF2E7D32), "Petição Pronta")
-        "SENT_TO_COURT" -> Pair(Color(0xFF6A1B9A), "Protocolado")
-        else -> Pair(Color(0xFF757575), "Pendente")
-    }
+    val visual = caseStatusVisual(status)
 
     Surface(
-        color = color.copy(alpha = 0.12f),
-        shape = RoundedCornerShape(8.dp)
+        color = visual.containerColor,
+        shape = Pill
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(6.dp)
-                    .background(color, CircleShape)
+            Icon(
+                imageVector = visual.icon,
+                contentDescription = null,
+                tint = visual.contentColor,
+                modifier = Modifier.size(14.dp)
             )
             Text(
-                text = text,
-                style = MaterialTheme.typography.labelSmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = color
+                text = visual.label,
+                style = MaterialTheme.typography.labelMedium.copy(
+                    color = visual.contentColor
                 )
             )
         }

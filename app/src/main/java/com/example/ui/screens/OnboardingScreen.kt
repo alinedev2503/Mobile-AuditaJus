@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -75,7 +74,6 @@ fun OnboardingScreen(
                     text = "Contador Jurídico Pro",
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Serif
                     ),
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -148,7 +146,6 @@ fun OnboardingScreen(
                         text = if (pagerState.currentPage == pages.size - 1) "Começar Agora" else "Próximo",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.SansSerif
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Icon(
@@ -197,7 +194,6 @@ fun OnboardingScreen(
                     text = currentPage.title,
                     style = MaterialTheme.typography.headlineMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Serif
                     ),
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
