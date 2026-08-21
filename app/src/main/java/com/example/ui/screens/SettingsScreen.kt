@@ -92,7 +92,7 @@ fun SettingsScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("user_profile_card"),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = MaterialTheme.shapes.large,
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
                     border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -302,7 +302,7 @@ fun SettingsScreen(
                         containerColor = MaterialTheme.colorScheme.errorContainer,
                         contentColor = MaterialTheme.colorScheme.onErrorContainer
                     ),
-                    shape = RoundedCornerShape(24.dp)
+                    shape = MaterialTheme.shapes.extraLarge
                 ) {
                     Icon(
                         imageVector = Icons.Default.Logout,
@@ -348,7 +348,7 @@ fun SettingsSectionCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)

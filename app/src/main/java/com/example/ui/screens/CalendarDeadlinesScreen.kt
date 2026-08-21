@@ -73,7 +73,7 @@ fun CalendarDeadlinesScreen(
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(24.dp),
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
                     border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -169,7 +169,7 @@ fun CalendarEventCardItem(
     onToggle: () -> Unit
 ) {
     val isHearing = item.type == "HEARING"
-    val accentColor = if (isHearing) MaterialTheme.colorScheme.primary else Color(0xFFBA1A1A)
+    val accentColor = if (isHearing) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
 
     Card(
         modifier = Modifier
@@ -198,7 +198,7 @@ fun CalendarEventCardItem(
                 ) {
                     Surface(
                         color = accentColor.copy(alpha = 0.15f),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = MaterialTheme.shapes.small
                     ) {
                         Text(
                             text = if (isHearing) "Audiência" else "Prazo Crítico",

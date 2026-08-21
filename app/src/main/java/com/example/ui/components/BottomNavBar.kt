@@ -18,6 +18,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.example.ui.theme.warningColors
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -59,7 +60,7 @@ fun AppBottomNavBar(
                         badge = {
                             if (destination == AppNavDestination.GUIDES && favoriteGuidesCount > 0) {
                                 Badge(
-                                    containerColor = Color(0xFFF59E0B),
+                                    containerColor = warningColors().content,
                                     contentColor = Color.White
                                 ) {
                                     Text(

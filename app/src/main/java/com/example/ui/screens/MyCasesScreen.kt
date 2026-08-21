@@ -123,7 +123,7 @@ fun MyCasesScreen(
                 PrimaryTabRow(
                     selectedTabIndex = selectedViewMode,
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    modifier = Modifier.clip(RoundedCornerShape(16.dp))
+                    modifier = Modifier.clip(MaterialTheme.shapes.large)
                 ) {
                     Tab(
                         selected = selectedViewMode == 0,
@@ -160,7 +160,7 @@ fun MyCasesScreen(
                                 }
                             }
                         },
-                        shape = RoundedCornerShape(16.dp),
+                        shape = MaterialTheme.shapes.large,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
                             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
@@ -311,7 +311,7 @@ fun MyCaseCardItem(
             .fillMaxWidth()
             .clickable { onClick() }
             .testTag("my_case_card_${caseEntity.id}"),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surfaceContainerLowest,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
         shadowElevation = 2.dp
@@ -438,7 +438,7 @@ fun StartNewCaseCard(onClick: () -> Unit) {
             .fillMaxWidth()
             .clickable { onClick() }
             .testTag("start_new_case_dashed_card"),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surfaceContainerLowest,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {

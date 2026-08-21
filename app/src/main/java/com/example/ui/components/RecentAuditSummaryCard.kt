@@ -11,13 +11,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.db.CaseEntity
+import com.example.ui.theme.Pill
+import com.example.ui.theme.caseStatusVisual
+import com.example.ui.theme.successColors
 
 @Composable
 fun RecentAuditSummaryCard(
@@ -59,7 +61,7 @@ fun RecentAuditSummaryCard(
                     }
 
                     Surface(
-                        shape = RoundedCornerShape(12.dp),
+                        shape = MaterialTheme.shapes.medium,
                         color = iconBg,
                         modifier = Modifier.size(42.dp)
                     ) {
@@ -89,17 +91,18 @@ fun RecentAuditSummaryCard(
                                 )
                             )
                             if (caseEntity.confidenceScore > 0 && caseEntity.rawGeminiJson.isNotBlank()) {
+                                val success = successColors()
                                 Surface(
-                                    shape = RoundedCornerShape(4.dp),
-                                    color = Color(0xFFDCFCE7)
+                                    shape = Pill,
+                                    color = success.container
                                 ) {
                                     Text(
                                         text = "IA ${(caseEntity.confidenceScore * 100).toInt()}%",
-                                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp),
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.dp),
                                         style = MaterialTheme.typography.labelSmall.copy(
                                             fontSize = 9.sp,
                                             fontWeight = FontWeight.Bold,
-                                            color = Color(0xFF166534)
+                                            color = success.content
                                         )
                                     )
                                 }
@@ -190,25 +193,31 @@ fun RecentAuditSummaryCard(
 
 @Composable
 private fun StatusBadge(status: String) {
-    val (bgColor, textColor, text) = when (status) {
-        "PDF_READY" -> Triple(MaterialTheme.colorScheme.primaryContainer, MaterialTheme.colorScheme.onPrimaryContainer, "PDF Pronto")
-        "SENT_TO_COURT" -> Triple(MaterialTheme.colorScheme.surfaceContainer, MaterialTheme.colorScheme.onSurface, "Enviado JEC")
-        "ANALYSING" -> Triple(MaterialTheme.colorScheme.errorContainer, MaterialTheme.colorScheme.onErrorContainer, "Em Análise")
-        else -> Triple(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.onSurfaceVariant, "Pendente")
-    }
+    val visual = caseStatusVisual(status)
 
     Surface(
-        color = bgColor,
-        shape = RoundedCornerShape(12.dp)
+        color = visual.containerColor,
+        shape = Pill
     ) {
-        Text(
-            text = text,
+        Row(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-            style = MaterialTheme.typography.labelSmall.copy(
-                fontWeight = FontWeight.Bold,
-                color = textColor,
-                fontSize = 10.sp
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Icon(
+                imageVector = visual.icon,
+                contentDescription = null,
+                tint = visual.contentColor,
+                modifier = Modifier.size(12.dp)
             )
-        )
+            Text(
+                text = visual.label,
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = visual.contentColor,
+                    fontSize = 10.sp
+                )
+            )
+        }
     }
 }

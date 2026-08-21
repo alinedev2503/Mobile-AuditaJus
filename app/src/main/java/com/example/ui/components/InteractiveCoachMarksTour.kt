@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import com.example.ui.theme.warningColors
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -124,7 +125,7 @@ fun InteractiveCoachMarksTour(
             // Coach mark dialog card
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp),
+                shape = MaterialTheme.shapes.extraLarge,
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                 border = androidx.compose.foundation.BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
@@ -140,7 +141,7 @@ fun InteractiveCoachMarksTour(
                     ) {
                         Surface(
                             color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = RoundedCornerShape(8.dp)
+                            shape = MaterialTheme.shapes.small
                         ) {
                             Text(
                                 text = "PASSO ${currentStepIndex + 1} DE ${tourSteps.size}",
@@ -185,7 +186,7 @@ fun InteractiveCoachMarksTour(
                     // Target hint badge
                     Surface(
                         color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                        shape = RoundedCornerShape(12.dp),
+                        shape = MaterialTheme.shapes.medium,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Row(
@@ -196,7 +197,7 @@ fun InteractiveCoachMarksTour(
                             Icon(
                                 imageVector = Icons.Default.Lightbulb,
                                 contentDescription = null,
-                                tint = Color(0xFFEAB308),
+                                tint = warningColors().content,
                                 modifier = Modifier.size(20.dp)
                             )
                             Text(

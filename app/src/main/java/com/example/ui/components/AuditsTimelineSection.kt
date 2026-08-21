@@ -240,7 +240,7 @@ fun TimelineAuditNodeItem(
                 ) {
                     Surface(
                         color = statusBg,
-                        shape = RoundedCornerShape(8.dp)
+                        shape = MaterialTheme.shapes.small
                     ) {
                         Row(
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),

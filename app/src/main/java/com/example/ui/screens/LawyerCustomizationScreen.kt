@@ -137,7 +137,7 @@ fun LawyerCustomizationScreen(
                 item {
                     Surface(
                         color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = RoundedCornerShape(12.dp),
+                        shape = MaterialTheme.shapes.medium,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Row(
@@ -168,7 +168,7 @@ fun LawyerCustomizationScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("live_letterhead_preview_card"),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = MaterialTheme.shapes.large,
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -215,9 +215,9 @@ fun LawyerCustomizationScreen(
                         if (useCustomLetterhead) {
                             // Paper-style Letterhead simulation
                             Surface(
-                                color = Color(0xFFFBFDFF),
-                                shape = RoundedCornerShape(8.dp),
-                                border = BorderStroke(1.dp, Color(0xFFE2E8F0)),
+                                color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                                shape = MaterialTheme.shapes.small,
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Column(modifier = Modifier.padding(14.dp)) {
@@ -228,7 +228,7 @@ fun LawyerCustomizationScreen(
                                         Box(
                                             modifier = Modifier
                                                 .size(42.dp)
-                                                .clip(RoundedCornerShape(8.dp))
+                                                .clip(MaterialTheme.shapes.small)
                                                 .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f)),
                                             contentAlignment = Alignment.Center
                                         ) {
@@ -254,19 +254,19 @@ fun LawyerCustomizationScreen(
                                                 text = if (lawFirmName.isNotBlank()) lawFirmName else "Silva & Associados Advocacia",
                                                 style = MaterialTheme.typography.titleMedium.copy(
                                                     fontWeight = FontWeight.Bold,
-                                                    color = Color(0xFF0F2D5A)
+                                                    color = MaterialTheme.colorScheme.onSurface
                                                 )
                                             )
                                             Text(
                                                 text = "$lawyerName • OAB/$oabUf nº $oabNumber",
                                                 style = MaterialTheme.typography.labelSmall.copy(
-                                                    color = Color(0xFF5A6473)
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                                 )
                                             )
                                             Text(
                                                 text = "$officeAddress • Tel: $officePhone",
                                                 style = MaterialTheme.typography.labelSmall.copy(
-                                                    color = Color(0xFF7A8699),
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                                     fontSize = 10.sp
                                                 )
                                             )
@@ -280,7 +280,7 @@ fun LawyerCustomizationScreen(
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))
                                     HorizontalDivider(
-                                        color = Color(0xFFCBD5E1),
+                                        color = MaterialTheme.colorScheme.outlineVariant,
                                         thickness = 0.8.dp
                                     )
                                 }
@@ -300,7 +300,7 @@ fun LawyerCustomizationScreen(
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = MaterialTheme.shapes.large,
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
@@ -365,7 +365,7 @@ fun LawyerCustomizationScreen(
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = MaterialTheme.shapes.large,
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
@@ -428,7 +428,7 @@ fun LawyerCustomizationScreen(
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = MaterialTheme.shapes.large,
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
@@ -453,9 +453,9 @@ fun LawyerCustomizationScreen(
                             Box(
                                 modifier = Modifier
                                     .size(72.dp)
-                                    .clip(RoundedCornerShape(12.dp))
+                                    .clip(MaterialTheme.shapes.medium)
                                     .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp)),
+                                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium),
                                 contentAlignment = Alignment.Center
                             ) {
                                 if (logoUri.isNotBlank()) {

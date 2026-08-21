@@ -58,7 +58,7 @@ fun GeminiAssistantDialog(
         properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Surface(
-            shape = RoundedCornerShape(24.dp),
+            shape = MaterialTheme.shapes.extraLarge,
             color = MaterialTheme.colorScheme.surface,
             border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             modifier = Modifier.fillMaxSize().padding(16.dp)
@@ -78,7 +78,7 @@ fun GeminiAssistantDialog(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Surface(
-                            shape = RoundedCornerShape(8.dp),
+                            shape = MaterialTheme.shapes.small,
                             color = MaterialTheme.colorScheme.primaryContainer
                         ) {
                             Icon(

@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.ui.theme.warningColors
 
 @Composable
 fun OfflineStatusBanner(
@@ -26,6 +27,7 @@ fun OfflineStatusBanner(
     modifier: Modifier = Modifier,
     onForceSimulateToggle: (() -> Unit)? = null
 ) {
+    val warning = warningColors()
     AnimatedVisibility(
         visible = !isOnline,
         enter = expandVertically() + fadeIn(),
@@ -36,9 +38,9 @@ fun OfflineStatusBanner(
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag("offline_status_banner_warning"),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFFEF3C7)), // amber warm
-            border = BorderStroke(1.dp, Color(0xFFF59E0B).copy(alpha = 0.5f))
+            shape = MaterialTheme.shapes.large,
+            colors = CardDefaults.cardColors(containerColor = warning.container),
+            border = BorderStroke(1.dp, warning.content.copy(alpha = 0.5f))
         ) {
             Row(
                 modifier = Modifier
@@ -53,7 +55,7 @@ fun OfflineStatusBanner(
                     modifier = Modifier.weight(1f)
                 ) {
                     Surface(
-                        color = Color(0xFFF59E0B),
+                        color = warning.content,
                         shape = CircleShape,
                         modifier = Modifier.size(28.dp)
                     ) {
@@ -72,13 +74,13 @@ fun OfflineStatusBanner(
                             text = "Modo Offline Ativo",
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF78350F)
+                                color = warning.content
                             )
                         )
                         Text(
                             text = "Acessando auditorias e cálculos salvos no Room local",
                             style = MaterialTheme.typography.bodySmall.copy(
-                                color = Color(0xFF92400E),
+                                color = warning.content,
                                 fontSize = 11.sp
                             )
                         )
@@ -86,9 +88,9 @@ fun OfflineStatusBanner(
                 }
 
                 Surface(
-                    color = Color(0xFFFDE68A),
-                    shape = RoundedCornerShape(8.dp),
-                    border = BorderStroke(1.dp, Color(0xFFF59E0B).copy(alpha = 0.3f))
+                    color = warning.container,
+                    shape = MaterialTheme.shapes.small,
+                    border = BorderStroke(1.dp, warning.content.copy(alpha = 0.3f))
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -98,14 +100,14 @@ fun OfflineStatusBanner(
                         Icon(
                             imageVector = Icons.Default.Storage,
                             contentDescription = null,
-                            tint = Color(0xFFB45309),
+                            tint = warning.content,
                             modifier = Modifier.size(12.dp)
                         )
                         Text(
                             text = "ROOM LOCAL",
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF78350F),
+                                color = warning.content,
                                 fontSize = 9.sp
                             )
                         )

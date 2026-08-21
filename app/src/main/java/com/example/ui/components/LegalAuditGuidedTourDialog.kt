@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import com.example.ui.theme.Pill
+import com.example.ui.theme.warningColors
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -181,7 +183,7 @@ fun LegalAuditGuidedTourDialog(
                         ) {
                             Surface(
                                 color = MaterialTheme.colorScheme.primaryContainer,
-                                shape = RoundedCornerShape(8.dp)
+                                shape = MaterialTheme.shapes.small
                             ) {
                                 Text(
                                     text = "PASSO ${currentStep.stepNumber} DE ${steps.size}",
@@ -197,7 +199,7 @@ fun LegalAuditGuidedTourDialog(
 
                             Surface(
                                 color = MaterialTheme.colorScheme.surfaceVariant,
-                                shape = RoundedCornerShape(8.dp)
+                                shape = MaterialTheme.shapes.small
                             ) {
                                 Text(
                                     text = currentStep.badgeText,
@@ -272,27 +274,28 @@ fun LegalAuditGuidedTourDialog(
                     }
 
                     // Law Reference Pill
+                    val warning = warningColors()
                     Surface(
-                        color = Color(0xFFFEF3C7),
-                        shape = RoundedCornerShape(10.dp),
+                        color = warning.container,
+                        shape = Pill,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Gavel,
                                 contentDescription = null,
-                                tint = Color(0xFF92400E),
+                                tint = warning.content,
                                 modifier = Modifier.size(14.dp)
                             )
                             Text(
                                 text = currentStep.lawReference,
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF92400E),
+                                    color = warning.content,
                                     fontSize = 10.sp
                                 )
                             )
@@ -332,7 +335,7 @@ fun LegalAuditGuidedTourDialog(
                             if (currentStepIndex > 0) {
                                 OutlinedButton(
                                     onClick = { currentStepIndex-- },
-                                    shape = RoundedCornerShape(12.dp)
+                                    shape = MaterialTheme.shapes.medium
                                 ) {
                                     Text("Voltar", fontSize = 12.sp)
                                 }
@@ -346,7 +349,7 @@ fun LegalAuditGuidedTourDialog(
                                         currentStepIndex++
                                     }
                                 },
-                                shape = RoundedCornerShape(12.dp),
+                                shape = MaterialTheme.shapes.medium,
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                                 modifier = Modifier.testTag("tour_step_next_btn")
                             ) {

@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.MainViewModel
+import com.example.ui.theme.warningColors
 
 data class LegalGuideItem(
     val id: String,
@@ -208,7 +209,7 @@ fun LegalGuidesScreen(
                                 }
                             },
                             modifier = Modifier.testTag("guide_filter_${cat.replace(" ", "_")}"),
-                            shape = RoundedCornerShape(16.dp),
+                            shape = MaterialTheme.shapes.large,
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                                 selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -244,7 +245,7 @@ fun LegalGuidesScreen(
                                 Icon(
                                     imageVector = Icons.Default.Bookmark,
                                     contentDescription = null,
-                                    tint = Color(0xFFF59E0B),
+                                    tint = warningColors().content,
                                     modifier = Modifier.size(18.dp)
                                 )
                                 Text(
@@ -292,7 +293,7 @@ fun LegalGuidesScreen(
                             .fillMaxWidth()
                             .clickable { selectedGuideForDetail = featured }
                             .testTag("featured_guide_card"),
-                        shape = RoundedCornerShape(24.dp),
+                        shape = MaterialTheme.shapes.extraLarge,
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     ) {
@@ -307,7 +308,7 @@ fun LegalGuidesScreen(
                             ) {
                                 Surface(
                                     color = Color.White,
-                                    shape = RoundedCornerShape(12.dp)
+                                    shape = MaterialTheme.shapes.medium
                                 ) {
                                     Text(
                                         text = "Tese em Destaque",
@@ -335,7 +336,7 @@ fun LegalGuidesScreen(
                                     Icon(
                                         imageVector = if (isFav) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
                                         contentDescription = if (isFav) "Desfavoritar" else "Favoritar",
-                                        tint = if (isFav) Color(0xFFF59E0B) else MaterialTheme.colorScheme.onPrimaryContainer
+                                        tint = if (isFav) warningColors().content else MaterialTheme.colorScheme.onPrimaryContainer
                                     )
                                 }
                             }
@@ -358,7 +359,7 @@ fun LegalGuidesScreen(
                             Button(
                                 onClick = { selectedGuideForDetail = featured },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                                shape = RoundedCornerShape(16.dp)
+                                shape = MaterialTheme.shapes.large
                             ) {
                                 Text("Ler Tese Completa", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                             }
@@ -382,7 +383,7 @@ fun LegalGuidesScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
-                        shape = RoundedCornerShape(16.dp)
+                        shape = MaterialTheme.shapes.large
                     ) {
                         Column(
                             modifier = Modifier.padding(24.dp),
@@ -457,7 +458,7 @@ fun FavoriteGuideMiniCard(
             .width(220.dp)
             .clickable { onClick() }
             .testTag("saved_guide_mini_card_${guide.id}"),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
@@ -492,7 +493,7 @@ fun FavoriteGuideMiniCard(
                     Icon(
                         imageVector = Icons.Filled.Bookmark,
                         contentDescription = "Remover dos favoritos",
-                        tint = Color(0xFFF59E0B),
+                        tint = warningColors().content,
                         modifier = Modifier.size(16.dp)
                     )
                 }
@@ -551,7 +552,7 @@ fun GuideCardItem(
                 ) {
                     Surface(
                         color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = RoundedCornerShape(8.dp)
+                        shape = MaterialTheme.shapes.small
                     ) {
                         Text(
                             text = guide.category,
@@ -575,7 +576,7 @@ fun GuideCardItem(
                     Icon(
                         imageVector = if (isFavorite) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
                         contentDescription = if (isFavorite) "Remover favorito" else "Salvar nos favoritos",
-                        tint = if (isFavorite) Color(0xFFF59E0B) else MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = if (isFavorite) warningColors().content else MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -625,7 +626,7 @@ fun GuideDetailDialog(
                     Icon(
                         imageVector = if (isFavorite) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
                         contentDescription = "Favoritar",
-                        tint = if (isFavorite) Color(0xFFF59E0B) else MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = if (isFavorite) warningColors().content else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -634,7 +635,7 @@ fun GuideDetailDialog(
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Surface(
                     color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = RoundedCornerShape(8.dp)
+                    shape = MaterialTheme.shapes.small
                 ) {
                     Text(
                         text = "Categoria: ${guide.category} • Leitura de ${guide.readTimeMinutes} min",

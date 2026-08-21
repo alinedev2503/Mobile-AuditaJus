@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.example.data.db.CaseEntity
 import com.example.ui.MainViewModel
 import com.example.ui.components.OfflineStatusBanner
+import com.example.ui.theme.warningColors
 import com.example.util.LegalCalculationEngine
 import com.example.util.PdfExportManager
 import com.example.util.rememberIsOnline
@@ -139,7 +140,7 @@ fun CalculationDetailsScreen(
                                 .weight(1.3f)
                                 .height(48.dp)
                                 .testTag("proceed_to_petition_button"),
-                            shape = RoundedCornerShape(24.dp),
+                            shape = MaterialTheme.shapes.extraLarge,
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                         ) {
                             Text(
@@ -171,7 +172,7 @@ fun CalculationDetailsScreen(
                                 .weight(0.9f)
                                 .height(48.dp)
                                 .testTag("calc_details_bottom_share_button"),
-                            shape = RoundedCornerShape(24.dp),
+                            shape = MaterialTheme.shapes.extraLarge,
                             colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
                             border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
                         ) {
@@ -197,7 +198,7 @@ fun CalculationDetailsScreen(
                             .fillMaxWidth()
                             .height(44.dp)
                             .testTag("adjust_values_button"),
-                        shape = RoundedCornerShape(24.dp),
+                        shape = MaterialTheme.shapes.extraLarge,
                         colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                     ) {
@@ -334,7 +335,7 @@ fun CalculationTypeSwitcherCard(
             .fillMaxWidth()
             .clickable { onOpenSelector() }
             .testTag("calc_type_switcher_card"),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
@@ -381,7 +382,7 @@ fun CalculationTypeSwitcherCard(
 
             Surface(
                 color = MaterialTheme.colorScheme.surfaceContainerLowest,
-                shape = RoundedCornerShape(8.dp),
+                shape = MaterialTheme.shapes.small,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
             ) {
                 Row(
@@ -410,7 +411,7 @@ fun CalculationTypeSwitcherCard(
 fun BankRatesComparativeCard(current: CaseEntity) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
@@ -461,14 +462,14 @@ fun BankRatesComparativeCard(current: CaseEntity) {
                     val diff = (if (current.bankContractRate > 0) current.bankContractRate else 8.5) - (if (current.bacenAverageRate > 0) current.bacenAverageRate else 2.1)
                     Text(
                         "+%.2f%%".format(maxOf(0.0, diff)),
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, color = Color(0xFFC2410C))
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, color = warningColors().content)
                     )
                 }
             }
 
             Surface(
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                shape = RoundedCornerShape(8.dp),
+                shape = MaterialTheme.shapes.small,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
@@ -486,7 +487,7 @@ fun BankRatesComparativeCard(current: CaseEntity) {
 fun TelecomSvaCard(current: CaseEntity) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
@@ -549,7 +550,7 @@ fun MaterialDamageCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
@@ -631,7 +632,7 @@ fun DamageItemRow(
             Box(
                 modifier = Modifier
                     .size(36.dp)
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh, RoundedCornerShape(8.dp)),
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh, MaterialTheme.shapes.small),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -659,7 +660,7 @@ fun DamageItemRow(
 fun MonetaryCorrectionReceiptCard(current: CaseEntity) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f))
@@ -768,7 +769,7 @@ fun ReceiptRow(label: String, value: String) {
 fun MoralDamagesHighlightCard(current: CaseEntity) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -816,7 +817,7 @@ fun MoralDamagesHighlightCard(current: CaseEntity) {
 fun LegalBasisCard(current: CaseEntity) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
@@ -862,7 +863,7 @@ fun LegalItem(
         Box(
             modifier = Modifier
                 .size(36.dp)
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh, RoundedCornerShape(8.dp)),
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh, MaterialTheme.shapes.small),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -1016,7 +1017,7 @@ fun CalculationTypeOption(
 ) {
     Surface(
         onClick = onSelect,
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
         border = BorderStroke(
             1.dp,

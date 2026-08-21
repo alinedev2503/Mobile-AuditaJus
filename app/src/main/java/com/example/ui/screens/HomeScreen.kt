@@ -42,6 +42,8 @@ import com.example.ui.components.InteractiveCoachMarksTour
 import com.example.ui.components.LegalAuditGuidedTourDialog
 import com.example.ui.components.OfflineStatusBanner
 import com.example.ui.components.RecentAuditSummaryCard
+import com.example.ui.theme.Pill
+import com.example.ui.theme.successColors
 import com.example.util.rememberIsOnline
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -116,7 +118,7 @@ fun HomeScreen(
                 actions = {
                     Surface(
                         color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = RoundedCornerShape(12.dp),
+                        shape = MaterialTheme.shapes.medium,
                         modifier = Modifier
                             .clickable { onNavigateToPlans() }
                             .testTag("home_pro_plans_badge")
@@ -217,7 +219,7 @@ fun HomeScreen(
             item {
                 Surface(
                     color = MaterialTheme.colorScheme.surfaceContainerLowest,
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)),
                     modifier = Modifier.fillMaxWidth().testTag("offline_sync_indicator_badge")
                 ) {
@@ -226,6 +228,7 @@ fun HomeScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
+                        val success = successColors()
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -233,7 +236,7 @@ fun HomeScreen(
                             Icon(
                                 imageVector = Icons.Default.CloudDone,
                                 contentDescription = null,
-                                tint = Color(0xFF16A34A),
+                                tint = success.content,
                                 modifier = Modifier.size(16.dp)
                             )
                             Text(
@@ -247,15 +250,15 @@ fun HomeScreen(
                         }
 
                         Surface(
-                            color = Color(0xFFDCFCE7),
-                            shape = RoundedCornerShape(6.dp)
+                            color = success.container,
+                            shape = Pill
                         ) {
                             Text(
                                 text = "OFFLINE OK",
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF166534),
+                                    color = success.content,
                                     fontSize = 9.sp
                                 )
                             )
@@ -392,7 +395,7 @@ fun HomeScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
-                        shape = RoundedCornerShape(16.dp)
+                        shape = MaterialTheme.shapes.large
                     ) {
                         Column(
                             modifier = Modifier.padding(20.dp),
@@ -489,7 +492,7 @@ fun BentoHeroScannerCard(
                 ) {
                     Surface(
                         color = Color.White.copy(alpha = 0.2f),
-                        shape = RoundedCornerShape(12.dp)
+                        shape = MaterialTheme.shapes.medium
                     ) {
                         Text(
                             text = "✨",
@@ -508,7 +511,7 @@ fun BentoHeroScannerCard(
 
                 Surface(
                     color = Color.White.copy(alpha = 0.2f),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     modifier = Modifier.clickable { onOpenTour() }.testTag("hero_tour_guide_button")
                 ) {
                     Row(
@@ -561,7 +564,7 @@ fun BentoHeroScannerCard(
                     containerColor = Color.White,
                     contentColor = MaterialTheme.colorScheme.primary
                 ),
-                shape = RoundedCornerShape(16.dp)
+                shape = MaterialTheme.shapes.large
             ) {
                 if (isAnalyzing) {
                     CircularProgressIndicator(
@@ -591,7 +594,7 @@ fun BentoTileDeadlines(modifier: Modifier = Modifier) {
         modifier = modifier
             .height(130.dp)
             .testTag("bento_tile_deadlines"),
-        shape = RoundedCornerShape(24.dp),
+        shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
         border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.2f))
     ) {
@@ -641,7 +644,7 @@ fun BentoTileEstimatedValue(
         modifier = modifier
             .height(130.dp)
             .testTag("bento_tile_estimated_value"),
-        shape = RoundedCornerShape(24.dp),
+        shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
         border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
@@ -697,7 +700,7 @@ fun BentoActiveCaseCard(
         modifier = Modifier
             .fillMaxWidth()
             .testTag("bento_active_case_card"),
-        shape = RoundedCornerShape(24.dp),
+        shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
     ) {
@@ -715,7 +718,7 @@ fun BentoActiveCaseCard(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Surface(
-                        shape = RoundedCornerShape(12.dp),
+                        shape = MaterialTheme.shapes.medium,
                         color = Color.White,
                         modifier = Modifier.size(40.dp)
                     ) {
@@ -844,7 +847,7 @@ fun AnexarProvasBentoSection(
         modifier = Modifier
             .fillMaxWidth()
             .testTag("upload_evidence_bento_dropzone"),
-        shape = RoundedCornerShape(24.dp),
+        shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
         border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
@@ -934,7 +937,7 @@ fun AnexarProvasBentoSection(
                             .fillMaxWidth()
                             .background(
                                 MaterialTheme.colorScheme.surfaceContainerLowest,
-                                RoundedCornerShape(12.dp)
+                                MaterialTheme.shapes.medium
                             )
                             .padding(10.dp)
                     ) {
@@ -987,7 +990,7 @@ fun BentoAuditCaseCard(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Surface(
-                        shape = RoundedCornerShape(12.dp),
+                        shape = MaterialTheme.shapes.medium,
                         color = MaterialTheme.colorScheme.primaryContainer,
                         modifier = Modifier.size(42.dp)
                     ) {
@@ -1050,7 +1053,7 @@ fun StatusBadge(status: String) {
 
     Surface(
         color = bgColor,
-        shape = RoundedCornerShape(12.dp)
+        shape = MaterialTheme.shapes.medium
     ) {
         Text(
             text = text,
@@ -1099,7 +1102,7 @@ fun HelpBannerBentoCard(onGuideClick: () -> Unit) {
             Button(
                 onClick = onGuideClick,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.testTag("view_help_guide_button")
             ) {
                 Text("Ver Guias", fontSize = 12.sp)

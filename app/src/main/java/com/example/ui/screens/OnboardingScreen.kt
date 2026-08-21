@@ -173,7 +173,7 @@ fun OnboardingScreen(
                     .padding(horizontal = 24.dp)
             ) {
                 Surface(
-                    shape = RoundedCornerShape(24.dp),
+                    shape = MaterialTheme.shapes.extraLarge,
                     color = MaterialTheme.colorScheme.surfaceContainerLow,
                     modifier = Modifier
                         .fillMaxWidth(0.85f)
@@ -186,7 +186,7 @@ fun OnboardingScreen(
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxSize()
-                            .clip(RoundedCornerShape(24.dp))
+                            .clip(MaterialTheme.shapes.extraLarge)
                     )
                 }
                 

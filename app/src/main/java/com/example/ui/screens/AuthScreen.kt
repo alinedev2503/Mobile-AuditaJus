@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.ui.MainViewModel
+import com.example.ui.theme.DarkBackground
 import com.example.util.GoogleSignInManager
 import kotlinx.coroutines.launch
 
@@ -45,7 +46,7 @@ fun AuthScreen(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .background(Color(0xFF0F172A))
+                        .background(DarkBackground)
                 ) {
                     AsyncImage(
                         model = "https://lh3.googleusercontent.com/aida-public/AB6AXuDdRi1zgITil5SnoPu9mFiiQsfJlv0yQG_J9mH1cuJqnpIBnGHZnvkKIywPCf0XCG3SK7FjN6Emo2ncbzrbtshXWPFg-fJzVkMiEVciIRPL5Zh3Oo1hqQqdbM7KLy19A8znzRUuAclfg-DVj6sxQri4lvallk-2BOWZIj8KR_yC5oM6kOY_1SuAOq2inKWu3-tpNlbjcFWW6MZGBMSNayYYpYyQdgz0y6dEMkL82f_En84SbhMVkFT-",
@@ -130,7 +131,7 @@ fun AuthForm(
     ) {
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
+            shape = MaterialTheme.shapes.extraLarge,
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -176,7 +177,7 @@ fun AuthForm(
                             placeholder = { Text("John Doe") },
                             leadingIcon = { Icon(Icons.Outlined.Person, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                             singleLine = true,
-                            shape = RoundedCornerShape(16.dp),
+                            shape = MaterialTheme.shapes.large,
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
@@ -198,7 +199,7 @@ fun AuthForm(
                         placeholder = { Text("name@example.com") },
                         leadingIcon = { Icon(Icons.Outlined.Email, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                         singleLine = true,
-                        shape = RoundedCornerShape(16.dp),
+                        shape = MaterialTheme.shapes.large,
                         modifier = Modifier.fillMaxWidth().testTag("auth_email_input"),
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
@@ -230,7 +231,7 @@ fun AuthForm(
                         },
                         visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         singleLine = true,
-                        shape = RoundedCornerShape(16.dp),
+                        shape = MaterialTheme.shapes.large,
                         modifier = Modifier.fillMaxWidth().testTag("auth_password_input"),
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,

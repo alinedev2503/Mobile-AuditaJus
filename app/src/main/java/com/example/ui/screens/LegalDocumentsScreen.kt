@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.MainViewModel
+import com.example.ui.theme.successColors
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -123,7 +124,7 @@ fun LegalDocumentsScreen(
                     }
                     
                     val buttonContainer = when {
-                        isSuccess -> Color(0xFF10B981) // Success Green
+                        isSuccess -> successColors().content
                         hasAccepted -> MaterialTheme.colorScheme.primaryContainer
                         else -> MaterialTheme.colorScheme.surfaceVariant
                     }
@@ -247,7 +248,7 @@ fun LegalDocumentsScreen(
                     .padding(bottom = 16.dp)
             ) {
                 Surface(
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     color = MaterialTheme.colorScheme.surface,
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)),
                     shadowElevation = 1.dp,

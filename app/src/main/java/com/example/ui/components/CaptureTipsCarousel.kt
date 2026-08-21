@@ -22,6 +22,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.ui.theme.Pill
+import com.example.ui.theme.filedColors
+import com.example.ui.theme.infoColors
+import com.example.ui.theme.successColors
+import com.example.ui.theme.warningColors
 
 data class CaptureTip(
     val id: String,
@@ -48,7 +53,7 @@ fun CaptureTipsCarousel(
             icon = Icons.Outlined.WbSunny,
             scoreBoost = "+25% Confiança",
             tag = "ILUMINAÇÃO",
-            tagColor = Color(0xFFF59E0B),
+            tagColor = warningColors().content,
             doTip = "Fotografe próximo a uma janela com luz natural ou luz difusa.",
             dontTip = "Não use o flash direto muito próximo para não 'cegar' os valores numéricos."
         ),
@@ -59,7 +64,7 @@ fun CaptureTipsCarousel(
             icon = Icons.Outlined.CenterFocusStrong,
             scoreBoost = "+30% Precisão",
             tag = "NITIDEZ & FOCO",
-            tagColor = Color(0xFF10B981),
+            tagColor = successColors().content,
             doTip = "Mantenha o celular estável e paralelo à folha durante o clique.",
             dontTip = "Evite fotos inclinadas em ângulo diagonal (perspectiva distorcida)."
         ),
@@ -70,7 +75,7 @@ fun CaptureTipsCarousel(
             icon = Icons.Outlined.CropFree,
             scoreBoost = "+20% Extração",
             tag = "ENQUADRAMENTO",
-            tagColor = Color(0xFF3B82F6),
+            tagColor = infoColors().content,
             doTip = "Apoie o documento sobre uma superfície plana com fundo contrastante (mesa escura).",
             dontTip = "Não corte o cabeçalho nem as notas explicativas de rodapé."
         ),
@@ -81,7 +86,7 @@ fun CaptureTipsCarousel(
             icon = Icons.Outlined.PictureAsPdf,
             scoreBoost = "100% SCORE",
             tag = "DIGITAL",
-            tagColor = Color(0xFF8B5CF6),
+            tagColor = filedColors().content,
             doTip = "Selecione o arquivo PDF original direto pela galeria / arquivos.",
             dontTip = "Evite tirar foto da tela do computador se você tiver o arquivo baixado."
         )
@@ -115,9 +120,10 @@ fun CaptureTipsCarousel(
                 )
             }
 
+            val badgeSuccess = successColors()
             Surface(
-                color = Color(0xFFDCFCE7),
-                shape = RoundedCornerShape(8.dp)
+                color = badgeSuccess.container,
+                shape = Pill
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
@@ -127,14 +133,14 @@ fun CaptureTipsCarousel(
                     Icon(
                         imageVector = Icons.Default.TrendingUp,
                         contentDescription = null,
-                        tint = Color(0xFF166534),
+                        tint = badgeSuccess.content,
                         modifier = Modifier.size(14.dp)
                     )
                     Text(
                         text = "Score Alto (IA)",
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF166534),
+                            color = badgeSuccess.content,
                             fontSize = 10.sp
                         )
                     )
@@ -264,7 +270,7 @@ fun CaptureTipCard(
                     Icon(
                         imageVector = Icons.Default.CheckCircle,
                         contentDescription = null,
-                        tint = Color(0xFF10B981),
+                        tint = successColors().content,
                         modifier = Modifier.size(14.dp)
                     )
                     Text(

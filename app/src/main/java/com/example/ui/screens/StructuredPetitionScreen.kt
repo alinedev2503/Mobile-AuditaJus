@@ -166,7 +166,7 @@ fun StructuredPetitionScreen(
                     item {
                         Surface(
                             color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = RoundedCornerShape(12.dp)
+                            shape = MaterialTheme.shapes.medium
                         ) {
                             Row(
                                 modifier = Modifier
@@ -199,7 +199,7 @@ fun StructuredPetitionScreen(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                         contentColor = MaterialTheme.colorScheme.primary,
                         edgePadding = 8.dp,
-                        modifier = Modifier.clip(RoundedCornerShape(16.dp))
+                        modifier = Modifier.clip(MaterialTheme.shapes.large)
                     ) {
                         Tab(
                             selected = selectedTab == 0,
@@ -285,7 +285,7 @@ fun StructuredPetitionScreen(
                                     onValueChange = { watermarkText = it },
                                     label = { Text("Texto da Marca d'Água no Fundo") },
                                     modifier = Modifier.fillMaxWidth(),
-                                    shape = RoundedCornerShape(12.dp),
+                                    shape = MaterialTheme.shapes.medium,
                                     singleLine = true
                                 )
 
@@ -312,7 +312,7 @@ fun StructuredPetitionScreen(
                             .fillMaxWidth()
                             .clickable { onNavigateToLawyerCustomization() }
                             .testTag("lawyer_timbre_banner_card"),
-                        shape = RoundedCornerShape(16.dp),
+                        shape = MaterialTheme.shapes.large,
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                     ) {
@@ -333,13 +333,13 @@ fun StructuredPetitionScreen(
                                         contentDescription = "Logo",
                                         modifier = Modifier
                                             .size(44.dp)
-                                            .clip(RoundedCornerShape(8.dp)),
+                                            .clip(MaterialTheme.shapes.small),
                                         contentScale = ContentScale.Crop
                                     )
                                 } else {
                                     Surface(
                                         color = MaterialTheme.colorScheme.primaryContainer,
-                                        shape = RoundedCornerShape(8.dp),
+                                        shape = MaterialTheme.shapes.small,
                                         modifier = Modifier.size(44.dp)
                                     ) {
                                         Box(contentAlignment = Alignment.Center) {
@@ -394,7 +394,7 @@ fun StructuredPetitionScreen(
                                 ) {
                                     Surface(
                                         color = MaterialTheme.colorScheme.primaryContainer,
-                                        shape = RoundedCornerShape(8.dp)
+                                        shape = MaterialTheme.shapes.small
                                     ) {
                                         Text(
                                             text = "Laudo Técnico de Auditoria",
@@ -415,7 +415,7 @@ fun StructuredPetitionScreen(
 
                                 Surface(
                                     color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                    shape = RoundedCornerShape(12.dp),
+                                    shape = MaterialTheme.shapes.medium,
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -466,7 +466,7 @@ fun StructuredPetitionScreen(
                                 containerColor = MaterialTheme.colorScheme.primary,
                                 contentColor = Color.White
                             ),
-                            shape = RoundedCornerShape(16.dp)
+                            shape = MaterialTheme.shapes.large
                         ) {
                             Icon(imageVector = Icons.Default.PictureAsPdf, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(6.dp))
@@ -489,7 +489,7 @@ fun StructuredPetitionScreen(
                                 .weight(0.8f)
                                 .height(52.dp)
                                 .testTag("share_petition_pdf_button"),
-                            shape = RoundedCornerShape(16.dp)
+                            shape = MaterialTheme.shapes.large
                         ) {
                             Icon(imageVector = Icons.Default.Share, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(4.dp))

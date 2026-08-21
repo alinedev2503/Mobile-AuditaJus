@@ -158,7 +158,7 @@ fun SubscriptionPlansScreen(
                 ) {
                     Surface(
                         color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f),
-                        shape = RoundedCornerShape(16.dp),
+                        shape = MaterialTheme.shapes.large,
                         modifier = Modifier.padding(bottom = 12.dp)
                     ) {
                         Row(
@@ -344,7 +344,7 @@ fun BillingCycleSelector(
             // Monthly Button
             Surface(
                 color = if (selectedCycle == BillingCycle.MONTHLY) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
-                shape = RoundedCornerShape(24.dp),
+                shape = MaterialTheme.shapes.extraLarge,
                 modifier = Modifier
                     .weight(1f)
                     .clickable { onCycleChange(BillingCycle.MONTHLY) }
@@ -361,7 +361,7 @@ fun BillingCycleSelector(
             // Annual Button with Discount Tag
             Surface(
                 color = if (selectedCycle == BillingCycle.ANNUAL) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
-                shape = RoundedCornerShape(24.dp),
+                shape = MaterialTheme.shapes.extraLarge,
                 modifier = Modifier
                     .weight(1.3f)
                     .clickable { onCycleChange(BillingCycle.ANNUAL) }
@@ -379,7 +379,7 @@ fun BillingCycleSelector(
                     Spacer(modifier = Modifier.width(6.dp))
                     Surface(
                         color = if (selectedCycle == BillingCycle.ANNUAL) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.primaryContainer,
-                        shape = RoundedCornerShape(8.dp)
+                        shape = MaterialTheme.shapes.small
                     ) {
                         Text(
                             text = "-30% OFF",
@@ -455,7 +455,7 @@ fun PlanCard(
                     )
                     Surface(
                         color = if (isFeatured) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
-                        shape = RoundedCornerShape(8.dp)
+                        shape = MaterialTheme.shapes.small
                     ) {
                         Text(
                             text = badge,
@@ -542,7 +542,7 @@ fun PlanCard(
 fun FaqBentoCard() {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
